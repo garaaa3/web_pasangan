@@ -20,6 +20,7 @@ h2{font-size:1.6rem;margin-bottom:12px}
 input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
 input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
 button{font:inherit;font-weight:600;background:var(--rose);color:#fff;border:0;border-radius:999px;padding:10px 22px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
 button.ghost{background:transparent;color:var(--rose);border:1px solid var(--rose)}
 button.link{background:none;color:var(--muted);padding:2px 0;font-weight:400;font-size:.85rem}
 .msg{color:var(--rose);min-height:1.4em;margin:6px 0}
@@ -42,25 +43,54 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
 .editbox{margin-top:12px}
 .editbox label{display:block;font-size:.9rem;color:var(--muted);margin-bottom:4px}
 
-/* Postingan */
-.post{margin-bottom:34px}
+/* Tab Foto / Video dan kotak-kotak */
+.ptabs{display:flex;border-bottom:1px solid var(--line);margin:4px 0 3px}
+.ptabs button{flex:1;background:none;color:var(--muted);border-radius:0;border-bottom:2px solid transparent;padding:10px 0}
+.ptabs button.on{color:var(--ink);border-bottom-color:var(--rose)}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.tile{position:relative;display:block;padding:0;border:0;border-radius:0;background:var(--surface);aspect-ratio:3/4;overflow:hidden}
+.tile img,.tile video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.tile .bd{position:absolute;top:6px;right:6px;color:#fff;font-size:1.05rem;text-shadow:0 0 5px rgba(0,0,0,.8);line-height:1}
+.empty{color:var(--muted);text-align:center;margin:30px 0}
+
+/* Layar postingan penuh */
+.viewer{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.vbar{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px}
+.vbar b{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.3rem}
+.vwrap{max-width:560px;margin:0 auto;padding:16px 20px 60px}
+.xbtn{background:none;color:var(--ink);font-size:1.6rem;padding:0 6px;line-height:1}
+.post{margin-bottom:34px;scroll-margin-top:70px}
 .post h3{font-size:1.5rem;line-height:1.2}
 .post time{display:block;color:var(--gold);font-weight:600;font-size:.95rem;margin:2px 0 10px}
-.slider{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
-.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.slider{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--surface);aspect-ratio:4/5}
+.track{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .track::-webkit-scrollbar{display:none}
-.track img{flex:0 0 100%;width:100%;aspect-ratio:4/5;object-fit:cover;scroll-snap-align:center;display:block}
-.count{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:.8rem;padding:2px 10px;border-radius:999px}
+.track .m{flex:0 0 100%;width:100%;height:100%;object-fit:contain;scroll-snap-align:center;display:block;background:var(--surface)}
+.count{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:.8rem;padding:2px 10px;border-radius:999px;pointer-events:none}
 .arrow{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;padding:0;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:1.2rem;line-height:1}
 .arrow.l{left:8px}.arrow.r{right:8px}
 .dots{display:flex;justify-content:center;gap:6px;margin:10px 0 2px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--line)}
 .dot.on{background:var(--rose)}
 .post p{margin:8px 0 0}
-.empty{color:var(--muted);text-align:center;margin:30px 0}
+
+/* Layar tambah postingan */
+.pickbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.pickbar b{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.4rem}
+.pvBox{display:flex;justify-content:center;align-items:center;min-height:220px;max-height:60vh;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.pvBox img,.pvBox video{display:block;max-width:100%;max-height:60vh}
+.pvEmpty{color:var(--muted);padding:40px 20px;text-align:center}
+.tools{display:flex;gap:14px;justify-content:center;margin:8px 0}
+.selrow{display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.th{position:relative;aspect-ratio:1;overflow:hidden;border-radius:8px;border:2px solid transparent;cursor:pointer;background:var(--surface)}
+.th.on{border-color:var(--rose)}
+.th img,.th video{width:100%;height:100%;object-fit:cover;display:block}
+.nb{position:absolute;top:4px;right:4px;background:var(--rose);color:#fff;font-size:.75rem;width:20px;height:20px;border-radius:50%;text-align:center;line-height:20px}
+.vb{position:absolute;bottom:4px;left:6px;color:#fff;font-size:.8rem;text-shadow:0 0 4px rgba(0,0,0,.7)}
 
 /* Menu bawah */
-.tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:10px;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:center;gap:10px;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
 .tabbar button{flex:1;max-width:220px;background:transparent;color:var(--muted);border:1px solid var(--line)}
 .tabbar button.on{background:var(--rose);color:#fff;border-color:var(--rose)}
 </style>
@@ -133,24 +163,58 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
         </div>
       </details>
     </div>
-    <div id="feed"></div>
+    <div class="ptabs">
+      <button class="on" data-pt="foto">▦ Foto</button>
+      <button data-pt="video">▶ Video</button>
+    </div>
+    <div id="pgrid" class="pgrid"></div>
   </div>
 
   <!-- Tambah postingan -->
   <div id="tabTambah" class="hidden">
-    <div class="card">
-      <h2>Postingan baru</h2>
-      <input id="pTitle" placeholder="Judul, misalnya: Liburan pertama ke Bali" aria-label="Judul">
-      <input id="pDate" type="date" aria-label="Tanggal">
-      <input id="pFile" type="file" accept="image/*" multiple aria-label="Pilih foto (bisa lebih dari satu)">
-      <p id="fCount" style="color:var(--muted);margin:0 0 10px"></p>
-      <textarea id="pCap" rows="2" placeholder="Cerita singkat (boleh dikosongkan)" aria-label="Cerita"></textarea>
-      <button id="bPost">Posting</button>
-      <p class="msg" id="mPost"></p>
+    <div id="stPick">
+      <div class="pickbar">
+        <button class="xbtn" id="bClose" aria-label="Batal">✕</button>
+        <b>Postingan baru</b>
+        <button id="bNext" disabled>Berikutnya</button>
+      </div>
+      <div class="pvBox" id="pvBox"></div>
+      <div class="tools hidden" id="pvTools">
+        <button class="link" id="tUp">‹ Maju</button>
+        <button class="link" id="tDown">Mundur ›</button>
+        <button class="link" id="tDel">Hapus</button>
+      </div>
+      <div class="selrow">
+        <span id="tCount" style="color:var(--muted)">Terpilih 0/10</span>
+        <button class="ghost" id="bPick">+ Pilih dari galeri</button>
+      </div>
+      <input id="pFile" type="file" accept="image/*,video/*" multiple class="hidden" aria-label="Pilih foto atau video">
+      <div class="grid" id="grid"></div>
+      <p class="msg" id="mPick"></p>
+    </div>
+    <div id="stInfo" class="hidden">
+      <div class="pickbar">
+        <button class="xbtn" id="bBack" aria-label="Kembali">‹</button>
+        <b>Detail postingan</b>
+        <span></span>
+      </div>
+      <div class="card">
+        <input id="pTitle" placeholder="Judul, misalnya: Liburan pertama ke Bali" aria-label="Judul">
+        <input id="pDate" type="date" aria-label="Tanggal">
+        <textarea id="pCap" rows="2" placeholder="Cerita singkat (boleh dikosongkan)" aria-label="Cerita"></textarea>
+        <button id="bPost">Posting</button>
+        <p class="msg" id="mPost"></p>
+      </div>
     </div>
   </div>
 </section>
 </main>
+
+<!-- Layar postingan penuh -->
+<div class="viewer hidden" id="viewer">
+  <div class="vbar"><button class="xbtn" id="vBack" aria-label="Kembali">‹</button><b>Postingan</b></div>
+  <div class="vwrap" id="vList"></div>
+</div>
 
 <nav class="tabbar hidden" id="nav">
   <button class="on" data-tab="beranda">Beranda</button>
@@ -164,12 +228,15 @@ const SUPABASE_KEY = "sb_publishable_Vqoso42wOQfVImHGMUupew_yESc1nN3";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const $ = id => document.getElementById(id);
-let uid = null, cid = null, names = {}, startDate = null, postsById = {};
+const MAXN = 10, MAXVID = 45 * 1024 * 1024;
+let uid = null, cid = null, names = {}, startDate = null;
+let allPosts = [], urlMap = {}, curPT = "foto";
+let sel = [], cur = 0;
 
 function show(v){
   ["vAuth","vSetup","vApp"].forEach(x => $(x).classList.toggle("hidden", x !== v));
   $("nav").classList.toggle("hidden", v !== "vApp");
-  if(v !== "vApp"){ $("siteTitle").textContent = "Kita Berdua"; document.title = "Kita Berdua"; }
+  if(v !== "vApp"){ closeViewer(); $("siteTitle").textContent = "Kita Berdua"; document.title = "Kita Berdua"; }
 }
 function esc(s){ const d = document.createElement("div"); d.textContent = s == null ? "" : s; return d.innerHTML.replace(/"/g, "&quot;"); }
 function fmt(d){ return new Date(d + "T00:00:00").toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"}); }
@@ -267,54 +334,123 @@ function tick(){
 }
 setInterval(tick, 1000);
 
-function pathsOf(p){ return (p.image_paths && p.image_paths.length) ? p.image_paths : [p.image_path]; }
+// ---------- Data postingan ----------
+// Daftar media sebuah postingan (mendukung postingan lama yang hanya berisi foto)
+function mediaOf(p){
+  if(p.media && p.media.length) return p.media;
+  const ps = (p.image_paths && p.image_paths.length) ? p.image_paths : [p.image_path];
+  return ps.map(x => ({ p:x, t:"i" }));
+}
+function ratioOf(m){ return (m.w && m.h) ? Math.min(2, Math.max(0.6, m.w / m.h)) : 0.8; }
+// Untuk postingan lama tanpa ukuran: sesuaikan bingkai setelah foto termuat
+function fit(el){
+  const s = el.closest(".slider"); if(!s || !el.naturalWidth) return;
+  s.style.aspectRatio = Math.min(2, Math.max(0.6, el.naturalWidth / el.naturalHeight));
+}
+function listFor(pt){
+  return allPosts.filter(p => mediaOf(p).some(m => pt === "video" ? m.t === "v" : m.t !== "v"));
+}
 
 async function loadFeed(){
   const { data:posts, error } = await sb.from("posts")
-    .select("id,author_id,title,post_date,caption,image_path,image_paths")
+    .select("id,author_id,title,post_date,caption,image_path,image_paths,media")
     .eq("couple_id", cid).order("post_date", { ascending:false }).order("created_at", { ascending:false });
-  if(error){ $("feed").innerHTML = '<p class="msg">' + esc(error.message) + '</p>'; return; }
-  postsById = {}; posts.forEach(p => postsById[p.id] = p);
-  if(!posts.length){ $("feed").innerHTML = '<p class="empty">Belum ada postingan. Ketuk + Tambah untuk mengunggah kenangan pertama kalian.</p>'; return; }
-  const all = []; posts.forEach(p => pathsOf(p).forEach(x => all.push(x)));
-  const { data:urls } = await sb.storage.from("photos").createSignedUrls(all, 3600);
-  const u = {}; (urls || []).forEach(x => u[x.path] = x.signedUrl);
-  $("feed").innerHTML = posts.map(p => {
-    const ps = pathsOf(p), many = ps.length > 1;
-    const imgs = ps.map((x, i) => '<img loading="lazy" src="' + esc(u[x] || "") + '" alt="' + esc(p.title) + ' foto ' + (i + 1) + '">').join("");
-    return '<article class="post"><h3>' + esc(p.title) + '</h3>' +
-      '<time>' + fmt(p.post_date) + ' · ' + esc(names[p.author_id] || "Pasangan") + '</time>' +
-      '<div class="slider"><div class="track">' + imgs + '</div>' +
-      (many ? '<span class="count">1/' + ps.length + '</span>' +
-        '<button class="arrow l" data-nav="prev" aria-label="Foto sebelumnya">‹</button>' +
-        '<button class="arrow r" data-nav="next" aria-label="Foto berikutnya">›</button>' : '') + '</div>' +
-      (many ? '<div class="dots">' + ps.map((_, i) => '<span class="dot' + (i === 0 ? " on" : "") + '"></span>').join("") + '</div>' : '') +
-      (p.caption ? '<p>' + esc(p.caption) + '</p>' : '') +
-      (p.author_id === uid ? '<button class="link" data-delpost="' + p.id + '">Hapus postingan</button>' : '') +
-      '</article>';
-  }).join("");
+  if(error){ $("pgrid").innerHTML = '<p class="msg" style="grid-column:1/-1">' + esc(error.message) + '</p>'; return; }
+  allPosts = posts;
+  const all = []; posts.forEach(p => mediaOf(p).forEach(m => all.push(m.p)));
+  urlMap = {};
+  if(all.length){
+    const { data:urls } = await sb.storage.from("photos").createSignedUrls(all, 3600);
+    (urls || []).forEach(x => urlMap[x.path] = x.signedUrl);
+  }
+  renderGrid();
 }
 
-// Penanda geser foto (1/3 dan titik)
-$("feed").addEventListener("scroll", e => {
+// ---------- Kotak-kotak (Foto / Video) ----------
+function renderGrid(){
+  document.querySelectorAll(".ptabs button").forEach(b => b.classList.toggle("on", b.dataset.pt === curPT));
+  const list = listFor(curPT);
+  if(!list.length){
+    $("pgrid").innerHTML = '<p class="empty" style="grid-column:1/-1">' +
+      (curPT === "video" ? "Belum ada video. Ketuk + Tambah untuk mengunggah." : "Belum ada foto. Ketuk + Tambah untuk mengunggah kenangan pertama kalian.") + '</p>';
+    return;
+  }
+  $("pgrid").innerHTML = list.map(p => {
+    const ms = mediaOf(p);
+    const k = ms.findIndex(m => curPT === "video" ? m.t === "v" : m.t !== "v");
+    const m = ms[k], src = esc(urlMap[m.p] || "");
+    const thumb = m.t === "v"
+      ? '<video src="' + src + '#t=0.1" muted playsinline preload="metadata"></video>'
+      : '<img loading="lazy" src="' + src + '" alt="">';
+    const badge = curPT === "video" ? "▶" : (ms.length > 1 ? "⧉" : "");
+    return '<button class="tile" data-id="' + p.id + '" data-k="' + k + '" aria-label="' + esc(p.title) + '">' + thumb +
+      (badge ? '<span class="bd">' + badge + '</span>' : '') + '</button>';
+  }).join("");
+}
+document.querySelectorAll(".ptabs button").forEach(b => b.onclick = () => { curPT = b.dataset.pt; renderGrid(); });
+$("pgrid").onclick = e => {
+  const t = e.target.closest(".tile"); if(t) openViewer(t.dataset.id, +t.dataset.k);
+};
+
+// ---------- Layar postingan penuh ----------
+function articleHTML(p){
+  const ms = mediaOf(p), many = ms.length > 1, r = ratioOf(ms[0]);
+  const items = ms.map((m, i) => {
+    const src = esc(urlMap[m.p] || "");
+    if(m.t === "v") return '<video class="m" src="' + src + '#t=0.1" controls playsinline preload="metadata"></video>';
+    return '<img class="m" loading="lazy" src="' + src + '" alt="' + esc(p.title) + ' ' + (i + 1) + '"' + (i === 0 && !ms[0].w ? ' onload="fit(this)"' : '') + '>';
+  }).join("");
+  return '<article class="post" data-pid="' + p.id + '"><h3>' + esc(p.title) + '</h3>' +
+    '<time>' + fmt(p.post_date) + ' · ' + esc(names[p.author_id] || "Pasangan") + '</time>' +
+    '<div class="slider" style="aspect-ratio:' + r + '"><div class="track">' + items + '</div>' +
+    (many ? '<span class="count">1/' + ms.length + '</span>' +
+      '<button class="arrow l" data-nav="prev" aria-label="Sebelumnya">‹</button>' +
+      '<button class="arrow r" data-nav="next" aria-label="Berikutnya">›</button>' : '') + '</div>' +
+    (many ? '<div class="dots">' + ms.map((_, i) => '<span class="dot' + (i === 0 ? " on" : "") + '"></span>').join("") + '</div>' : '') +
+    (p.caption ? '<p>' + esc(p.caption) + '</p>' : '') +
+    (p.author_id === uid ? '<button class="link" data-delpost="' + p.id + '">Hapus postingan</button>' : '') +
+    '</article>';
+}
+
+function openViewer(id, idx){
+  $("vList").innerHTML = listFor(curPT).map(articleHTML).join("");
+  $("viewer").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+  const art = $("vList").querySelector('[data-pid="' + id + '"]');
+  if(art){
+    art.scrollIntoView({ block:"start" });
+    const tr = art.querySelector(".track");
+    if(tr && idx > 0){ requestAnimationFrame(() => { tr.scrollLeft = idx * tr.clientWidth; }); }
+  }
+}
+function closeViewer(){
+  $("vList").innerHTML = "";
+  $("viewer").classList.add("hidden");
+  document.body.style.overflow = "";
+}
+$("vBack").onclick = closeViewer;
+
+// Penanda geser (1/3 dan titik), video lain dijeda saat digeser
+$("vList").addEventListener("scroll", e => {
   const t = e.target;
   if(!t.classList || !t.classList.contains("track")) return;
-  const i = Math.round(t.scrollLeft / t.clientWidth);
-  const art = t.closest(".post");
+  const i = Math.round(t.scrollLeft / t.clientWidth), art = t.closest(".post");
   const c = art.querySelector(".count"); if(c) c.textContent = (i + 1) + "/" + t.children.length;
   art.querySelectorAll(".dot").forEach((d, k) => d.classList.toggle("on", k === i));
+  Array.from(t.children).forEach((el, k) => { if(k !== i && el.tagName === "VIDEO") el.pause(); });
 }, true);
 
-$("feed").onclick = async e => {
+$("vList").onclick = async e => {
   const t = e.target.closest("button"); if(!t) return;
   if(t.dataset.nav){
     const tr = t.closest(".slider").querySelector(".track");
     tr.scrollBy({ left:(t.dataset.nav === "next" ? 1 : -1) * tr.clientWidth, behavior:"smooth" });
   } else if(t.dataset.delpost){
-    const p = postsById[t.dataset.delpost];
-    if(!p || !confirm("Hapus postingan ini beserta semua fotonya?")) return;
-    await sb.storage.from("photos").remove(pathsOf(p));
+    const p = allPosts.find(x => x.id === t.dataset.delpost);
+    if(!p || !confirm("Hapus postingan ini beserta semua foto dan videonya?")) return;
+    await sb.storage.from("photos").remove(mediaOf(p).map(m => m.p));
     await sb.from("posts").delete().eq("id", p.id);
+    closeViewer();
     loadFeed();
   }
 };
@@ -338,7 +474,72 @@ $("bSaveInfo").onclick = async () => {
   await loadApp();
 };
 
-// ---------- Unggah banyak foto ----------
+// ---------- Pilih media (langkah 1) ----------
+function readMeta(f){
+  return new Promise((ok, fail) => {
+    const url = URL.createObjectURL(f);
+    if(f.type.startsWith("video/")){
+      const v = document.createElement("video");
+      v.preload = "metadata"; v.muted = true; v.playsInline = true;
+      v.onloadedmetadata = () => ok({ type:"v", url, w:v.videoWidth || 16, h:v.videoHeight || 9 });
+      v.onerror = () => { URL.revokeObjectURL(url); fail(new Error("Video tidak bisa dibaca di browser ini.")); };
+      v.src = url;
+    } else {
+      const im = new Image();
+      im.onload = () => ok({ type:"i", url, w:im.naturalWidth, h:im.naturalHeight });
+      im.onerror = () => { URL.revokeObjectURL(url); fail(new Error("File gambar tidak bisa dibaca.")); };
+      im.src = url;
+    }
+  });
+}
+
+function renderPick(){
+  const p = sel[cur];
+  $("pvBox").innerHTML = p
+    ? (p.type === "v" ? '<video src="' + p.url + '" controls playsinline></video>' : '<img src="' + p.url + '" alt="Pratinjau">')
+    : '<div class="pvEmpty">Belum ada foto atau video dipilih.<br>Ketuk + Pilih dari galeri.</div>';
+  $("pvTools").classList.toggle("hidden", !p);
+  $("tCount").textContent = "Terpilih " + sel.length + "/" + MAXN;
+  $("grid").innerHTML = sel.map((s, i) =>
+    '<div class="th' + (i === cur ? " on" : "") + '" data-i="' + i + '">' +
+    (s.type === "v" ? '<video src="' + s.url + '#t=0.1" muted playsinline preload="metadata"></video><span class="vb">▶</span>' : '<img src="' + s.url + '" alt="">') +
+    '<span class="nb">' + (i + 1) + '</span></div>').join("");
+  $("bNext").disabled = !sel.length;
+}
+
+$("bPick").onclick = () => $("pFile").click();
+$("pFile").onchange = async () => {
+  const fs = Array.from($("pFile").files); $("pFile").value = "";
+  $("mPick").textContent = "";
+  for(const f of fs){
+    if(sel.length >= MAXN){ $("mPick").textContent = "Maksimal " + MAXN + " foto atau video per postingan."; break; }
+    if(!/^(image|video)\//.test(f.type)){ $("mPick").textContent = "File yang bukan foto atau video dilewati."; continue; }
+    if(f.type.startsWith("video/") && f.size > MAXVID){ $("mPick").textContent = "Video di atas 45 MB dilewati. Potong atau kecilkan dulu."; continue; }
+    try{ const m = await readMeta(f); sel.push(Object.assign({ file:f }, m)); }
+    catch(err){ $("mPick").textContent = err.message; }
+  }
+  if(cur >= sel.length) cur = Math.max(0, sel.length - 1);
+  renderPick();
+};
+$("grid").onclick = e => { const t = e.target.closest(".th"); if(t){ cur = +t.dataset.i; renderPick(); } };
+$("tUp").onclick = () => { if(cur > 0){ [sel[cur-1], sel[cur]] = [sel[cur], sel[cur-1]]; cur--; renderPick(); } };
+$("tDown").onclick = () => { if(cur < sel.length - 1){ [sel[cur+1], sel[cur]] = [sel[cur], sel[cur+1]]; cur++; renderPick(); } };
+$("tDel").onclick = () => {
+  URL.revokeObjectURL(sel[cur].url); sel.splice(cur, 1);
+  cur = Math.max(0, Math.min(cur, sel.length - 1)); renderPick();
+};
+
+function resetPost(){
+  sel.forEach(s => URL.revokeObjectURL(s.url)); sel = []; cur = 0;
+  $("pTitle").value = ""; $("pCap").value = ""; $("mPost").textContent = ""; $("mPick").textContent = "";
+  $("stInfo").classList.add("hidden"); $("stPick").classList.remove("hidden");
+  renderPick();
+}
+$("bClose").onclick = () => { resetPost(); tab("beranda"); };
+$("bNext").onclick = () => { $("stPick").classList.add("hidden"); $("stInfo").classList.remove("hidden"); window.scrollTo(0, 0); };
+$("bBack").onclick = () => { $("stInfo").classList.add("hidden"); $("stPick").classList.remove("hidden"); };
+
+// ---------- Unggah (langkah 2) ----------
 function shrink(file){
   return new Promise((ok, fail) => {
     const r = new FileReader();
@@ -357,42 +558,46 @@ function shrink(file){
   });
 }
 
-$("pFile").onchange = () => {
-  const n = $("pFile").files.length;
-  $("fCount").textContent = n ? (n > 10 ? "10 foto pertama yang dipakai (maksimal 10)" : n + " foto dipilih") : "";
-};
-
 $("bPost").onclick = async () => {
-  const title = $("pTitle").value.trim(), date = $("pDate").value, files = Array.from($("pFile").files).slice(0, 10);
+  const title = $("pTitle").value.trim(), date = $("pDate").value;
   $("mPost").textContent = "";
-  if(!title || !date || !files.length){ $("mPost").textContent = "Isi judul, tanggal, dan pilih minimal satu foto."; return; }
+  if(!title || !date){ $("mPost").textContent = "Isi judul dan tanggal dulu."; return; }
+  if(!sel.length){ $("mPost").textContent = "Pilih minimal satu foto atau video."; return; }
   $("bPost").disabled = true;
-  const paths = []; let done = false;
+  const media = []; let done = false;
   try{
-    for(let i = 0; i < files.length; i++){
-      $("mPost").textContent = "Mengunggah " + (i + 1) + " dari " + files.length + "...";
-      const blob = await shrink(files[i]), path = cid + "/" + crypto.randomUUID() + ".jpg";
-      const up = await sb.storage.from("photos").upload(path, blob, { contentType:"image/jpeg" });
+    for(let i = 0; i < sel.length; i++){
+      const s = sel[i];
+      $("mPost").textContent = "Mengunggah " + (i + 1) + " dari " + sel.length + (s.type === "v" ? " (video, mungkin agak lama)" : "") + "...";
+      let blob, ct, ext;
+      if(s.type === "i"){ blob = await shrink(s.file); ct = "image/jpeg"; ext = "jpg"; }
+      else{
+        blob = s.file; ct = s.file.type || "video/mp4";
+        ext = ((s.file.name.split(".").pop() || "mp4").toLowerCase().replace(/[^a-z0-9]/g, "")) || "mp4";
+      }
+      const path = cid + "/" + crypto.randomUUID() + "." + ext;
+      const up = await sb.storage.from("photos").upload(path, blob, { contentType:ct });
       if(up.error) throw up.error;
-      paths.push(path);
+      media.push({ p:path, t:s.type, w:s.w, h:s.h });
     }
     const ins = await sb.from("posts").insert({
       couple_id:cid, title, post_date:date, caption:$("pCap").value.trim() || null,
-      image_path:paths[0], image_paths:paths
+      image_path:media[0].p, image_paths:media.map(m => m.p), media
     });
     if(ins.error) throw ins.error;
     done = true;
   }catch(err){
-    if(paths.length) await sb.storage.from("photos").remove(paths);
+    if(media.length) await sb.storage.from("photos").remove(media.map(m => m.p));
     $("mPost").textContent = "Gagal: " + err.message;
   }
   $("bPost").disabled = false;
   if(done){
-    $("pTitle").value = ""; $("pCap").value = ""; $("pFile").value = ""; $("fCount").textContent = ""; $("mPost").textContent = "";
-    tab("beranda"); loadFeed();
+    curPT = media.every(m => m.t === "v") ? "video" : "foto";
+    resetPost(); tab("beranda"); loadFeed();
   }
 };
 
+renderPick();
 route();
 </script>
 </body>
