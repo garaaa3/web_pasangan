@@ -180,19 +180,22 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
     <div id="pgrid" class="pgrid"></div>
   </div>
 
-  <button data-tab="impian">I<!-- Impian -->
+  <!-- Impian -->
   <div id="tabImpian" class="hidden">
-    <div class="card">
-      <h2>Impian bersama</h2>
-      <p id="wCount" style="color:var(--muted);margin:0 0 10px"></p>
-      <input id="wTitle" placeholder="Tulis impian, misalnya: Liburan ke Bali" aria-label="Impian baru" maxlength="200">
-      <button id="bWish">Tambah impian</button>
+    <h2>Impian bersama</h2>
+    <p id="wCount" style="color:var(--muted);margin:0 0 12px"></p>
+    <button class="ghost" id="bShowWish">+ Tambah impian</button>
+    <div id="wForm" class="card hidden" style="margin-top:12px">
+      <input id="wTitle" placeholder="Tulis impianmu di sini, misalnya: Liburan ke Bali" aria-label="Impian baru" maxlength="200">
+      <button id="bWish">Simpan impian</button>
+      <button class="link" id="bCancelWish">Batal</button>
       <p class="msg" id="mWish"></p>
     </div>
-    <div id="wList"></div>
+    <div id="wList" style="margin-top:16px"></div>
   </div>
 
-  <!-- Tambah postingan -->mpian</button>
+  <!-- Tambah postingan -->
+
   <button data-tab="tambah">+ Tambah</button>
   <div id="tabTambah" class="hidden">
     <div id="stPick">
@@ -695,6 +698,29 @@ $("wList").onclick = async e => {
     if(error) alert("Gagal menghapus: " + error.message); else loadWishes();
   }
 };
+
+// ---------- Impian: tampilan baru (tanpa lingkaran) ----------
+function wishRow(w){
+  return '<div class="wish' + (w.done ? " done" : "") + '"><div class="wt"><span>' + esc(w.title) + '</span><small>' +
+    esc(names[w.author_id] || "Pasangan") + (w.done && w.done_at ? " · terwujud " + fmt(w.done_at.slice(0, 10)) : "") + '</small></div>' +
+    '<button class="link" data-wt="' + w.id + '">' + (w.done ? "Batal terwujud" : "Terwujud") + '</button>' +
+    '<button class="link" data-wedit="' + w.id + '">Ubah</button>' +
+    '<button class="link" data-wdel="' + w.id + '">Hapus</button></div>';
+}
+
+async function addWish(){
+  const t = $("wTitle").value.trim(); $("mWish").textContent = "";
+  if(!t){ $("mWish").textContent = "Tulis impiannya dulu."; return; }
+  const { error } = await sb.from("wishes").insert({ couple_id:cid, title:t });
+  if(error){ $("mWish").textContent = "Gagal menambah: " + error.message; return; }
+  $("wTitle").value = ""; $("wForm").classList.add("hidden"); loadWishes();
+}
+
+$("bShowWish").onclick = () => {
+  $("wForm").classList.toggle("hidden");
+  if(!$("wForm").classList.contains("hidden")) $("wTitle").focus();
+};
+$("bCancelWish").onclick = () => { $("wTitle").value = ""; $("mWish").textContent = ""; $("wForm").classList.add("hidden"); };
 
 renderPick();
 route();
