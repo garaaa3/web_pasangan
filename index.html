@@ -252,6 +252,32 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
     <div id="calUp"></div>
   </div>
 
+  <!-- Tabungan -->
+  <div id="tabTabungan" class="hidden">
+    <h2>Tabungan bersama</h2>
+    <div class="card" id="sAcc"></div>
+    <div id="aForm" class="card hidden">
+      <input id="aBank" placeholder="Nama bank atau e-wallet, misalnya: BCA" aria-label="Nama bank" maxlength="60">
+      <input id="aNo" inputmode="numeric" placeholder="Nomor rekening" aria-label="Nomor rekening" maxlength="40">
+      <input id="aName" placeholder="Atas nama" aria-label="Atas nama" maxlength="80">
+      <button id="bSaveAcc">Simpan rekening</button>
+      <button class="link" id="bCancelAcc">Batal</button>
+      <p class="msg" id="mAcc"></p>
+    </div>
+    <div class="card hero" id="sTotal"></div>
+    <button class="ghost" id="bShowSave">+ Catat tabungan</button>
+    <div id="sForm" class="card hidden" style="margin-top:12px">
+      <p style="margin:0 0 10px;color:var(--muted)">Penabung: <b id="sWho"></b></p>
+      <input id="sAmt" inputmode="numeric" placeholder="Jumlah yang ditabung, misalnya 50000" aria-label="Jumlah tabungan">
+      <input type="date" id="sDate" aria-label="Tanggal menabung">
+      <input id="sNote" placeholder="Catatan (boleh dikosongkan)" aria-label="Catatan" maxlength="200">
+      <button id="bSave">Simpan</button>
+      <button class="link" id="bCancelSave">Batal</button>
+      <p class="msg" id="mSave"></p>
+    </div>
+    <div id="sList" style="margin-top:16px"></div>
+  </div>
+
   <!-- Tambah postingan -->
   <div id="tabTambah" class="hidden">
     <div id="stPick">
@@ -301,7 +327,8 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
 <nav class="tabbar hidden" id="nav">
   <button class="on" data-tab="beranda">Beranda</button>
   <button data-tab="impian">Impian</button>
-  <button data-tab="tambah">+ Tambah</button>
+  <button data-tab="tabungan">Tabungan</button>
+  <button data-tab="tambah">+ Tambah Postingan</button>
 </nav>
 
 <script>
@@ -334,6 +361,8 @@ function tab(t){
   $("tabBeranda").classList.toggle("hidden", t !== "beranda");
   $("tabImpian").classList.toggle("hidden", t !== "impian");
   $("tabTambah").classList.toggle("hidden", t !== "tambah");
+  $("tabTabungan").classList.toggle("hidden", t !== "tabungan");
+  if(t === "tabungan") loadSavings();
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
   if(t === "impian"){ loadWishes(); loadEvents(); }
   window.scrollTo(0, 0);
@@ -754,6 +783,208 @@ $("calDay").onclick = async e => {
     if(!confirm("Hapus tanda ini?")) return;
     const { error } = await sb.from("events").delete().eq("id", b.dataset.evdel);
     if(error) alert("Gagal menghapus: " + error.message); else loadEvents();
+  }
+};
+
+// ---------- Tabungan ----------
+let sInfo = null, savings = [];
+const rp = n => "Rp" + Number(n).toLocaleString("id-ID");
+const toNum = v => parseInt(String(v).replace(/\D/g, ""), 10);
+
+async function loadSavings(){
+  const a = await sb.from("savings_info").select("bank_name,account_number,account_holder").eq("couple_id", cid).maybeSingle();
+  const b = await sb.from("savings").select("id,author_id,amount,note,saved_on,created_at")
+    .eq("couple_id", cid).order("saved_on", { ascending:false }).order("created_at", { ascending:false });
+  if(b.error){ $("sList").innerHTML = '<p class="msg">' + esc(b.error.message) + '</p>'; return; }
+  sInfo = a.data || null; savings = b.data;
+  renderSavings();
+}
+
+function renderSavings(){
+  const has = sInfo && sInfo.account_number;
+  $("sAcc").innerHTML = has
+    ? '<small style="color:var(--muted)">Rekening tabungan kita</small>' +
+      '<div style="font-weight:600;margin:2px 0">' + esc(sInfo.bank_name || "") + '</div>' +
+      '<div class="code" style="font-size:1.2rem">' + esc(sInfo.account_number) + '</div>' +
+      '<div style="color:var(--muted)">a.n. ' + esc(sInfo.account_holder || "-") + '</div>' +
+      '<div style="margin-top:8px"><button class="link" data-acc="copy">Salin nomor</button> <button class="link" data-acc="edit">Ubah</button></div>'
+    : '<p style="margin:0 0 10px;color:var(--muted)">Belum ada nomor rekening tabungan.</p><button class="ghost" data-acc="edit">+ Tambah nomor rekening</button>';
+
+  const total = savings.reduce((s, x) => s + Number(x.amount), 0), by = {};
+  savings.forEach(x => { const n = names[x.author_id] || "Pasangan"; by[n] = (by[n] || 0) + Number(x.amount); });
+  $("sTotal").innerHTML = '<small style="color:var(--muted)">Total tabungan</small>' +
+    '<div class="names" style="color:var(--rose)">' + rp(total) + '</div>' +
+    Object.keys(by).map(n => '<div style="color:var(--muted)">' + esc(n) + ': ' + rp(by[n]) + '</div>').join("");
+
+  $("sList").innerHTML = savings.length
+    ? '<div class="wh">Riwayat tabungan</div>' + savings.map(x =>
+        '<div class="wish"><div class="wt"><span>' + rp(x.amount) + ' · ' + esc(names[x.author_id] || "Pasangan") + '</span><small>' +
+        fmt(x.saved_on) + (x.note ? ' · ' + esc(x.note) : '') + '</small></div>' +
+        (x.author_id === uid ? '<button class="link" data-sedit="' + x.id + '">Ubah</button><button class="link" data-sdel="' + x.id + '">Hapus</button>' : '') +
+        '</div>').join("")
+    : '<p class="empty">Belum ada catatan tabungan. Ketuk + Catat tabungan di atas.</p>';
+}
+
+// Rekening
+$("sAcc").onclick = async e => {
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.acc === "copy"){
+    try{ await navigator.clipboard.writeText(sInfo.account_number); b.textContent = "Tersalin"; }
+    catch(err){ prompt("Salin nomor rekening ini:", sInfo.account_number); }
+  } else if(b.dataset.acc === "edit"){
+    $("aBank").value = sInfo ? sInfo.bank_name || "" : "";
+    $("aNo").value = sInfo ? sInfo.account_number || "" : "";
+    $("aName").value = sInfo ? sInfo.account_holder || "" : "";
+    $("mAcc").textContent = ""; $("aForm").classList.remove("hidden"); $("aBank").focus();
+  }
+};
+$("bCancelAcc").onclick = () => $("aForm").classList.add("hidden");
+$("bSaveAcc").onclick = async () => {
+  const row = { bank_name:$("aBank").value.trim() || null, account_number:$("aNo").value.trim(), account_holder:$("aName").value.trim() || null };
+  $("mAcc").textContent = "";
+  if(!row.account_number){ $("mAcc").textContent = "Isi nomor rekeningnya dulu."; return; }
+  const r = sInfo
+    ? await sb.from("savings_info").update(row).eq("couple_id", cid)
+    : await sb.from("savings_info").insert(Object.assign({ couple_id:cid }, row));
+  if(r.error){ $("mAcc").textContent = "Gagal menyimpan: " + r.error.message; return; }
+  $("aForm").classList.add("hidden"); loadSavings();
+};
+
+// Catat tabungan
+$("bShowSave").onclick = () => {
+  $("sWho").textContent = names[uid] || "Kamu";
+  $("sDate").value = ymd(new Date());
+  $("mSave").textContent = "";
+  $("sForm").classList.toggle("hidden");
+  if(!$("sForm").classList.contains("hidden")) $("sAmt").focus();
+};
+$("bCancelSave").onclick = () => { $("sAmt").value = ""; $("sNote").value = ""; $("sForm").classList.add("hidden"); };
+$("bSave").onclick = async () => {
+  const amt = toNum($("sAmt").value), date = $("sDate").value;
+  $("mSave").textContent = "";
+  if(!amt || amt < 1){ $("mSave").textContent = "Isi jumlah tabungan dengan angka, misalnya 50000."; return; }
+  if(!date){ $("mSave").textContent = "Pilih tanggalnya dulu."; return; }
+  const { error } = await sb.from("savings").insert({ couple_id:cid, amount:amt, note:$("sNote").value.trim() || null, saved_on:date });
+  if(error){ $("mSave").textContent = "Gagal menyimpan: " + error.message; return; }
+  $("sAmt").value = ""; $("sNote").value = ""; $("sForm").classList.add("hidden"); loadSavings();
+};
+
+// Ubah / hapus catatan tabungan milik sendiri
+$("sList").onclick = async e => {
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.sdel){
+    if(!confirm("Hapus catatan tabungan ini?")) return;
+    const { error } = await sb.from("savings").delete().eq("id", b.dataset.sdel);
+    if(error) alert("Gagal menghapus: " + error.message); else loadSavings();
+  } else if(b.dataset.sedit){
+    const x = savings.find(s => s.id === b.dataset.sedit); if(!x) return;
+    const a = prompt("Jumlah tabungan:", x.amount); if(a === null) return;
+    const n = toNum(a);
+    if(!n || n < 1){ alert("Jumlah harus berupa angka lebih dari 0."); return; }
+    const c = prompt("Catatan (kosongkan untuk menghapus catatan):", x.note || ""); if(c === null) return;
+    const { error } = await sb.from("savings").update({ amount:n, note:c.trim() || null }).eq("id", x.id);
+    if(error) alert("Gagal menyimpan: " + error.message); else loadSavings();
+  }
+};
+
+// ---------- Tabungan ----------
+let sInfo = null, savings = [];
+const rp = n => "Rp" + Number(n).toLocaleString("id-ID");
+const toNum = v => parseInt(String(v).replace(/\D/g, ""), 10);
+
+async function loadSavings(){
+  const a = await sb.from("savings_info").select("bank_name,account_number,account_holder").eq("couple_id", cid).maybeSingle();
+  const b = await sb.from("savings").select("id,author_id,amount,note,saved_on,created_at")
+    .eq("couple_id", cid).order("saved_on", { ascending:false }).order("created_at", { ascending:false });
+  if(b.error){ $("sList").innerHTML = '<p class="msg">' + esc(b.error.message) + '</p>'; return; }
+  sInfo = a.data || null; savings = b.data;
+  renderSavings();
+}
+
+function renderSavings(){
+  const has = sInfo && sInfo.account_number;
+  $("sAcc").innerHTML = has
+    ? '<small style="color:var(--muted)">Rekening tabungan kita</small>' +
+      '<div style="font-weight:600;margin:2px 0">' + esc(sInfo.bank_name || "") + '</div>' +
+      '<div class="code" style="font-size:1.2rem">' + esc(sInfo.account_number) + '</div>' +
+      '<div style="color:var(--muted)">a.n. ' + esc(sInfo.account_holder || "-") + '</div>' +
+      '<div style="margin-top:8px"><button class="link" data-acc="copy">Salin nomor</button> <button class="link" data-acc="edit">Ubah</button></div>'
+    : '<p style="margin:0 0 10px;color:var(--muted)">Belum ada nomor rekening tabungan.</p><button class="ghost" data-acc="edit">+ Tambah nomor rekening</button>';
+
+  const total = savings.reduce((s, x) => s + Number(x.amount), 0), by = {};
+  savings.forEach(x => { const n = names[x.author_id] || "Pasangan"; by[n] = (by[n] || 0) + Number(x.amount); });
+  $("sTotal").innerHTML = '<small style="color:var(--muted)">Total tabungan</small>' +
+    '<div class="names" style="color:var(--rose)">' + rp(total) + '</div>' +
+    Object.keys(by).map(n => '<div style="color:var(--muted)">' + esc(n) + ': ' + rp(by[n]) + '</div>').join("");
+
+  $("sList").innerHTML = savings.length
+    ? '<div class="wh">Riwayat tabungan</div>' + savings.map(x =>
+        '<div class="wish"><div class="wt"><span>' + rp(x.amount) + ' · ' + esc(names[x.author_id] || "Pasangan") + '</span><small>' +
+        fmt(x.saved_on) + (x.note ? ' · ' + esc(x.note) : '') + '</small></div>' +
+        (x.author_id === uid ? '<button class="link" data-sedit="' + x.id + '">Ubah</button><button class="link" data-sdel="' + x.id + '">Hapus</button>' : '') +
+        '</div>').join("")
+    : '<p class="empty">Belum ada catatan tabungan. Ketuk + Catat tabungan di atas.</p>';
+}
+
+// Rekening
+$("sAcc").onclick = async e => {
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.acc === "copy"){
+    try{ await navigator.clipboard.writeText(sInfo.account_number); b.textContent = "Tersalin"; }
+    catch(err){ prompt("Salin nomor rekening ini:", sInfo.account_number); }
+  } else if(b.dataset.acc === "edit"){
+    $("aBank").value = sInfo ? sInfo.bank_name || "" : "";
+    $("aNo").value = sInfo ? sInfo.account_number || "" : "";
+    $("aName").value = sInfo ? sInfo.account_holder || "" : "";
+    $("mAcc").textContent = ""; $("aForm").classList.remove("hidden"); $("aBank").focus();
+  }
+};
+$("bCancelAcc").onclick = () => $("aForm").classList.add("hidden");
+$("bSaveAcc").onclick = async () => {
+  const row = { bank_name:$("aBank").value.trim() || null, account_number:$("aNo").value.trim(), account_holder:$("aName").value.trim() || null };
+  $("mAcc").textContent = "";
+  if(!row.account_number){ $("mAcc").textContent = "Isi nomor rekeningnya dulu."; return; }
+  const r = sInfo
+    ? await sb.from("savings_info").update(row).eq("couple_id", cid)
+    : await sb.from("savings_info").insert(Object.assign({ couple_id:cid }, row));
+  if(r.error){ $("mAcc").textContent = "Gagal menyimpan: " + r.error.message; return; }
+  $("aForm").classList.add("hidden"); loadSavings();
+};
+
+// Catat tabungan
+$("bShowSave").onclick = () => {
+  $("sWho").textContent = names[uid] || "Kamu";
+  $("sDate").value = ymd(new Date());
+  $("mSave").textContent = "";
+  $("sForm").classList.toggle("hidden");
+  if(!$("sForm").classList.contains("hidden")) $("sAmt").focus();
+};
+$("bCancelSave").onclick = () => { $("sAmt").value = ""; $("sNote").value = ""; $("sForm").classList.add("hidden"); };
+$("bSave").onclick = async () => {
+  const amt = toNum($("sAmt").value), date = $("sDate").value;
+  $("mSave").textContent = "";
+  if(!amt || amt < 1){ $("mSave").textContent = "Isi jumlah tabungan dengan angka, misalnya 50000."; return; }
+  if(!date){ $("mSave").textContent = "Pilih tanggalnya dulu."; return; }
+  const { error } = await sb.from("savings").insert({ couple_id:cid, amount:amt, note:$("sNote").value.trim() || null, saved_on:date });
+  if(error){ $("mSave").textContent = "Gagal menyimpan: " + error.message; return; }
+  $("sAmt").value = ""; $("sNote").value = ""; $("sForm").classList.add("hidden"); loadSavings();
+};
+
+// Ubah / hapus catatan tabungan milik sendiri
+$("sList").onclick = async e => {
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.sdel){
+    if(!confirm("Hapus catatan tabungan ini?")) return;
+    const { error } = await sb.from("savings").delete().eq("id", b.dataset.sdel);
+    if(error) alert("Gagal menghapus: " + error.message); else loadSavings();
+  } else if(b.dataset.sedit){
+    const x = savings.find(s => s.id === b.dataset.sedit); if(!x) return;
+    const a = prompt("Jumlah tabungan:", x.amount); if(a === null) return;
+    const n = toNum(a);
+    if(!n || n < 1){ alert("Jumlah harus berupa angka lebih dari 0."); return; }
+    const c = prompt("Catatan (kosongkan untuk menghapus catatan):", x.note || ""); if(c === null) return;
+    const { error } = await sb.from("savings").update({ amount:n, note:c.trim() || null }).eq("id", x.id);
+    if(error) alert("Gagal menyimpan: " + error.message); else loadSavings();
   }
 };
 
