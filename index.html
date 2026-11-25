@@ -36,6 +36,19 @@ button.link{background:none;color:var(--muted);padding:2px 0;font-weight:400;fon
 .cm small{color:var(--muted)}
 .cmform{display:flex;gap:8px;margin-top:8px}
 .cmform input{margin:0}
+.hero{text-align:center}
+.names{font-family:"DM Serif Display",Georgia,serif;font-size:clamp(1.6rem,6vw,2.2rem);line-height:1.2}
+.names i{color:var(--rose)}
+.since{color:var(--muted);margin:4px 0 14px}
+.clock{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:420px;margin:0 auto}
+.clock div{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 4px}
+.clock b{display:block;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.8rem;color:var(--rose);line-height:1}
+.clock span{font-size:.8rem;color:var(--muted)}
+.next{color:var(--muted);margin:12px 0 0}
+details{margin-top:14px;text-align:left}
+summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
+.editbox{margin-top:12px}
+.editbox label{display:block;font-size:.9rem;color:var(--muted);margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -77,6 +90,28 @@ button.link{background:none;color:var(--muted);padding:2px 0;font-weight:400;fon
     <div><b id="cTitle"></b><br><small style="color:var(--muted)">Kode undangan: <span class="code" id="cCode"></span></small><br><button class="link" id="bRename">Ubah nama ruang</button></div>
     <button class="ghost" id="bOut2">Keluar</button>
   </div>
+  <div class="card hero">
+    <div class="names"><span id="nA">Kamu</span> <i>&amp;</i> <span id="nB">Dia</span></div>
+    <p class="since" id="since"></p>
+    <div class="clock" id="kClock">
+      <div><b id="kD">0</b><span>hari</span></div>
+      <div><b id="kH">0</b><span>jam</span></div>
+      <div><b id="kM">0</b><span>menit</span></div>
+      <div><b id="kS">0</b><span>detik</span></div>
+    </div>
+    <p class="next" id="next"></p>
+    <details>
+      <summary>Ubah nama dan tanggal jadian</summary>
+      <div class="editbox">
+        <label for="eMe">Namamu</label>
+        <input id="eMe" placeholder="Namamu">
+        <label for="eDate">Tanggal jadian</label>
+        <input type="date" id="eDate">
+        <button id="bSaveInfo">Simpan</button>
+        <p class="msg" id="mInfo"></p>
+      </div>
+    </details>
+  </div>
   <div id="feed"></div>
   <div class="card">
     <h2>Tambah foto</h2>
@@ -112,7 +147,7 @@ async function route(){
   if(!m){ return show("vSetup"); }
   cid = m.couple_id;
   show("vApp");
-  await loadApp();
+  await loadApp(); await loadInfo();
 }
 sb.auth.onAuthStateChange(() => { route(); });
 
@@ -233,6 +268,58 @@ $("bPost").onclick = async () => {
 };
 
 route();
+// ---------- Nama dan tanggal jadian ----------
+let startDate = null;
+
+async function loadInfo(){
+  const { data:c } = await sb.from("couples").select("start_date").eq("id", cid).single();
+  startDate = c && c.start_date ? c.start_date : null;
+  const { data:ms } = await sb.from("members").select("user_id,display_name").eq("couple_id", cid);
+  (ms || []).forEach(m => names[m.user_id] = m.display_name);
+  const me = (ms || []).find(m => m.user_id === uid);
+  const other = (ms || []).find(m => m.user_id !== uid);
+  $("nA").textContent = me ? me.display_name : "Kamu";
+  $("nB").textContent = other ? other.display_name : "Menunggu pasangan...";
+  $("eMe").value = me ? me.display_name : "";
+  $("eDate").value = startDate || "";
+  tick();
+}
+
+function tick(){
+  if(!startDate){
+    $("kClock").style.display = "none";
+    $("since").textContent = "Belum ada tanggal jadian. Isi lewat Ubah nama dan tanggal jadian.";
+    $("next").textContent = "";
+    return;
+  }
+  $("kClock").style.display = "";
+  $("since").textContent = "Bersama sejak " + fmt(startDate);
+  const st = new Date(startDate + "T00:00:00"), now = new Date();
+  const s = Math.max(0, Math.floor((now - st) / 1000));
+  $("kD").textContent = Math.floor(s / 86400);
+  $("kH").textContent = Math.floor(s % 86400 / 3600);
+  $("kM").textContent = Math.floor(s % 3600 / 60);
+  $("kS").textContent = s % 60;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const nx = new Date(now.getFullYear(), st.getMonth(), st.getDate());
+  if(nx < today) nx.setFullYear(nx.getFullYear() + 1);
+  const left = Math.round((nx - today) / 86400000), yrs = nx.getFullYear() - st.getFullYear();
+  $("next").textContent = left === 0 ? "Selamat hari jadi ke-" + yrs + "!" : left + " hari lagi menuju hari jadi ke-" + yrs;
+}
+setInterval(tick, 1000);
+
+$("bSaveInfo").onclick = async () => {
+  $("mInfo").textContent = "";
+  const n = $("eMe").value.trim(), d = $("eDate").value || null;
+  if(!n){ $("mInfo").textContent = "Nama tidak boleh kosong."; return; }
+  const r1 = await sb.from("members").update({ display_name:n }).eq("couple_id", cid).eq("user_id", uid);
+  if(r1.error){ $("mInfo").textContent = "Gagal menyimpan nama: " + r1.error.message; return; }
+  const r2 = await sb.from("couples").update({ start_date:d }).eq("id", cid);
+  if(r2.error){ $("mInfo").textContent = "Gagal menyimpan tanggal: " + r2.error.message; return; }
+  $("mInfo").textContent = "Tersimpan.";
+  await loadInfo();
+  loadFeed();
+};
 
 $("bRename").onclick = async () => {
   const n = prompt("Nama ruang baru:", $("cTitle").textContent);

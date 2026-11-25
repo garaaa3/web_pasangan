@@ -1,177 +1,537 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kita Berdua</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;600&display=swap">
-<style>
-:root{--bg:#fbf1ee;--surface:#fff8f6;--ink:#3a1f2b;--muted:#7d5f6b;--rose:#c2415d;--rose-soft:#f3cdd4;--line:#ecd3d6;--gold:#b98a3e;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1118;--surface:#2a1822;--ink:#f6e6ea;--muted:#c4a3ae;--rose:#ef7b92;--rose-soft:#4a2432;--line:#4a2d3a;--gold:#e0b46a}}
-:root[data-theme="dark"]{--bg:#1e1118;--surface:#2a1822;--ink:#f6e6ea;--muted:#c4a3ae;--rose:#ef7b92;--rose-soft:#4a2432;--line:#4a2d3a;--gold:#e0b46a}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Figtree,system-ui,sans-serif;line-height:1.6}
-main{max-width:720px;margin:0 auto;padding:0 20px 64px}
-h1,h2,.big{font-family:"DM Serif Display",Georgia,serif;font-weight:400;margin:0}
-.hero{text-align:center;padding:56px 0 40px}
-.names{font-size:clamp(2rem,8vw,3.2rem);line-height:1.1}
-.names i{color:var(--rose)}
-.since{color:var(--muted);margin:8px 0 28px}
-.clock{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 auto;max-width:480px}
-.clock div{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 4px}
-.clock b{display:block;font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(1.8rem,8vw,2.6rem);color:var(--rose);line-height:1}
-.clock span{font-size:.85rem;color:var(--muted)}
-.next{margin-top:20px;color:var(--muted)}
-section{margin-top:48px}
-h2{font-size:1.7rem;margin-bottom:16px}
-.feed{display:flex;flex-direction:column;gap:36px;margin-bottom:28px}
-.post h3{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.5rem;line-height:1.2;margin:0 0 4px}
-.post time{display:block;color:var(--gold);font-weight:600;font-size:.95rem;margin-bottom:10px}
-.post img{display:block;width:100%;height:auto;border-radius:18px;border:1px solid var(--line)}
-.post p{margin:10px 0 0}
-.post .del{background:transparent;color:var(--muted);padding:4px 0;font-weight:400;font-size:.85rem;margin-top:6px}
-.empty{color:var(--muted);margin:0 0 20px}
-.preview{max-width:200px;border-radius:12px;margin-bottom:10px;display:none}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
-.note{border-bottom:1px dashed var(--line);padding:10px 0}
-.note:last-child{border:0}
-.note small{color:var(--muted)}
-input,textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
-input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
-button{font:inherit;font-weight:600;background:var(--rose);color:#fff;border:0;border-radius:999px;padding:10px 22px;cursor:pointer}
-button.ghost{background:transparent;color:var(--rose);border:1px solid var(--rose)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:480px){.row{grid-template-columns:1fr}}
-details{margin-top:40px;color:var(--muted)}
-summary{cursor:pointer;color:var(--rose);font-weight:600}
-footer{text-align:center;color:var(--muted);margin-top:56px;font-size:.9rem}
-</style>
-</head>
-<body>
-<main>
-<header class="hero">
-  <h1 class="names"><span id="n1">Kamu</span> <i>&amp;</i> <span id="n2">Dia</span></h1>
-  <p class="since" id="since"></p>
-  <div class="clock" aria-live="off">
-    <div><b id="cd">0</b><span>hari</span></div>
-    <div><b id="ch">0</b><span>jam</span></div>
-    <div><b id="cm">0</b><span>menit</span></div>
-    <div><b id="cs">0</b><span>detik</span></div>
-  </div>
-  <p class="next" id="next"></p>
-</header>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Kita Berdua</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;600&display=swap"
+    />
+    <style>
+      :root {
+        --bg: #fbf1ee;
+        --surface: #fff8f6;
+        --ink: #3a1f2b;
+        --muted: #7d5f6b;
+        --rose: #c2415d;
+        --rose-soft: #f3cdd4;
+        --line: #ecd3d6;
+        --gold: #b98a3e;
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #1e1118;
+          --surface: #2a1822;
+          --ink: #f6e6ea;
+          --muted: #c4a3ae;
+          --rose: #ef7b92;
+          --rose-soft: #4a2432;
+          --line: #4a2d3a;
+          --gold: #e0b46a;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #1e1118;
+        --surface: #2a1822;
+        --ink: #f6e6ea;
+        --muted: #c4a3ae;
+        --rose: #ef7b92;
+        --rose-soft: #4a2432;
+        --line: #4a2d3a;
+        --gold: #e0b46a;
+      }
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: Figtree, system-ui, sans-serif;
+        line-height: 1.6;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 20px 64px;
+      }
+      h1,
+      h2,
+      .big {
+        font-family: "DM Serif Display", Georgia, serif;
+        font-weight: 400;
+        margin: 0;
+      }
+      .hero {
+        text-align: center;
+        padding: 56px 0 40px;
+      }
+      .names {
+        font-size: clamp(2rem, 8vw, 3.2rem);
+        line-height: 1.1;
+      }
+      .names i {
+        color: var(--rose);
+      }
+      .since {
+        color: var(--muted);
+        margin: 8px 0 28px;
+      }
+      .clock {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin: 0 auto;
+        max-width: 480px;
+      }
+      .clock div {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 14px 4px;
+      }
+      .clock b {
+        display: block;
+        font-family: "DM Serif Display", Georgia, serif;
+        font-weight: 400;
+        font-size: clamp(1.8rem, 8vw, 2.6rem);
+        color: var(--rose);
+        line-height: 1;
+      }
+      .clock span {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .next {
+        margin-top: 20px;
+        color: var(--muted);
+      }
+      section {
+        margin-top: 48px;
+      }
+      h2 {
+        font-size: 1.7rem;
+        margin-bottom: 16px;
+      }
+      .feed {
+        display: flex;
+        flex-direction: column;
+        gap: 36px;
+        margin-bottom: 28px;
+      }
+      .post h3 {
+        font-family: "DM Serif Display", Georgia, serif;
+        font-weight: 400;
+        font-size: 1.5rem;
+        line-height: 1.2;
+        margin: 0 0 4px;
+      }
+      .post time {
+        display: block;
+        color: var(--gold);
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+      }
+      .post img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+      }
+      .post p {
+        margin: 10px 0 0;
+      }
+      .post .del {
+        background: transparent;
+        color: var(--muted);
+        padding: 4px 0;
+        font-weight: 400;
+        font-size: 0.85rem;
+        margin-top: 6px;
+      }
+      .empty {
+        color: var(--muted);
+        margin: 0 0 20px;
+      }
+      .preview {
+        max-width: 200px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        display: none;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+      }
+      .note {
+        border-bottom: 1px dashed var(--line);
+        padding: 10px 0;
+      }
+      .note:last-child {
+        border: 0;
+      }
+      .note small {
+        color: var(--muted);
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        font: inherit;
+        color: var(--ink);
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+      }
+      input:focus-visible,
+      textarea:focus-visible,
+      select:focus-visible,
+      button:focus-visible {
+        outline: 2px solid var(--rose);
+        outline-offset: 2px;
+      }
+      button {
+        font: inherit;
+        font-weight: 600;
+        background: var(--rose);
+        color: #fff;
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 22px;
+        cursor: pointer;
+      }
+      button.ghost {
+        background: transparent;
+        color: var(--rose);
+        border: 1px solid var(--rose);
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      @media (max-width: 480px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+      }
+      details {
+        margin-top: 40px;
+        color: var(--muted);
+      }
+      summary {
+        cursor: pointer;
+        color: var(--rose);
+        font-weight: 600;
+      }
+      footer {
+        text-align: center;
+        color: var(--muted);
+        margin-top: 56px;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <h1 class="names">
+          <span id="n1">Kamu</span> <i>&amp;</i> <span id="n2">Dia</span>
+        </h1>
+        <p class="since" id="since"></p>
+        <div class="clock" aria-live="off">
+          <div><b id="cd">0</b><span>hari</span></div>
+          <div><b id="ch">0</b><span>jam</span></div>
+          <div><b id="cm">0</b><span>menit</span></div>
+          <div><b id="cs">0</b><span>detik</span></div>
+        </div>
+        <p class="next" id="next"></p>
+      </header>
 
-<section>
-  <h2>Perjalanan kita</h2>
-  <div class="feed" id="feed"></div>
-  <div class="card">
-    <input id="pTitle" placeholder="Judul, misalnya: Liburan pertama ke Bali" aria-label="Judul">
-    <input type="date" id="pDate" aria-label="Tanggal foto">
-    <input type="file" id="pFile" accept="image/*" aria-label="Pilih foto">
-    <img class="preview" id="pPrev" alt="Pratinjau foto">
-    <textarea id="pCap" rows="2" placeholder="Cerita singkat (boleh dikosongkan)" aria-label="Cerita singkat"></textarea>
-    <button id="addPost">Tambah foto</button>
-  </div>
-</section>
+      <section>
+        <h2>Perjalanan kita</h2>
+        <div class="feed" id="feed"></div>
+        <div class="card">
+          <input
+            id="pTitle"
+            placeholder="Judul, misalnya: Liburan pertama ke Bali"
+            aria-label="Judul"
+          />
+          <input type="date" id="pDate" aria-label="Tanggal foto" />
+          <input
+            type="file"
+            id="pFile"
+            accept="image/*"
+            aria-label="Pilih foto"
+          />
+          <img class="preview" id="pPrev" alt="Pratinjau foto" />
+          <textarea
+            id="pCap"
+            rows="2"
+            placeholder="Cerita singkat (boleh dikosongkan)"
+            aria-label="Cerita singkat"
+          ></textarea>
+          <button id="addPost">Tambah foto</button>
+        </div>
+      </section>
 
-<section>
-  <h2>Pesan untuk satu sama lain</h2>
-  <div class="card">
-    <div id="notes"></div>
-    <select id="who" aria-label="Pengirim"></select>
-    <textarea id="noteText" rows="3" placeholder="Tulis pesan manis hari ini"></textarea>
-    <button id="addNote">Kirim pesan</button>
-  </div>
-</section>
+      <section>
+        <h2>Pesan untuk satu sama lain</h2>
+        <div class="card">
+          <div id="notes"></div>
+          <select id="who" aria-label="Pengirim"></select>
+          <textarea
+            id="noteText"
+            rows="3"
+            placeholder="Tulis pesan manis hari ini"
+          ></textarea>
+          <button id="addNote">Kirim pesan</button>
+        </div>
+      </section>
 
-<details>
-  <summary>Ubah nama dan tanggal jadian</summary>
-  <div class="card" style="margin-top:12px">
-    <div class="row"><input id="in1" placeholder="Namamu" aria-label="Namamu"><input id="in2" placeholder="Nama pasanganmu" aria-label="Nama pasanganmu"></div>
-    <input type="date" id="inDate" aria-label="Tanggal jadian">
-    <button id="save">Simpan</button>
-  </div>
-</details>
+      <details>
+        <summary>Ubah nama dan tanggal jadian</summary>
+        <div class="card" style="margin-top: 12px">
+          <div class="row">
+            <input id="in1" placeholder="Namamu" aria-label="Namamu" /><input
+              id="in2"
+              placeholder="Nama pasanganmu"
+              aria-label="Nama pasanganmu"
+            />
+          </div>
+          <input type="date" id="inDate" aria-label="Tanggal jadian" />
+          <button id="save">Simpan</button>
+        </div>
+      </details>
 
-<footer>Dibuat berdua, untuk berdua.</footer>
-</main>
+      <footer>Dibuat berdua, untuk berdua.</footer>
+    </main>
 
-<script>
-var KEY="couple-site-v1";
-var S={n1:"Kamu",n2:"Dia",start:"2024-02-14",posts:[],notes:[]};
-try{var raw=localStorage.getItem(KEY);if(raw){S=Object.assign(S,JSON.parse(raw))}}catch(e){}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}}
-function $(id){return document.getElementById(id)}
-function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
-function fmt(d){return new Date(d+"T00:00:00").toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})}
+    <script>
+      var KEY = "couple-site-v1";
+      var S = {
+        n1: "Kamu",
+        n2: "Dia",
+        start: "2024-02-14",
+        posts: [],
+        notes: [],
+      };
+      try {
+        var raw = localStorage.getItem(KEY);
+        if (raw) {
+          S = Object.assign(S, JSON.parse(raw));
+        }
+      } catch (e) {}
+      function persist() {
+        try {
+          localStorage.setItem(KEY, JSON.stringify(S));
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+      function $(id) {
+        return document.getElementById(id);
+      }
+      function esc(s) {
+        var d = document.createElement("div");
+        d.textContent = s;
+        return d.innerHTML;
+      }
+      function fmt(d) {
+        return new Date(d + "T00:00:00").toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      }
 
-function render(){
-  $("n1").textContent=S.n1;$("n2").textContent=S.n2;
-  $("since").textContent="Bersama sejak "+fmt(S.start);
-  $("in1").value=S.n1;$("in2").value=S.n2;$("inDate").value=S.start;
-  $("who").innerHTML="<option>"+esc(S.n1)+"</option><option>"+esc(S.n2)+"</option>";
-  var ps=S.posts.map(function(p,i){p.i=i;return p}).sort(function(a,b){return a.d<b.d?1:-1});
-  $("feed").innerHTML=ps.length?ps.map(function(p){return '<article class="post"><h3>'+esc(p.title)+'</h3><time>'+fmt(p.d)+'</time><img src="'+p.img+'" alt="'+esc(p.title)+'">'+(p.cap?'<p>'+esc(p.cap)+'</p>':'')+'<button class="del" data-i="'+p.i+'">Hapus</button></article>'}).join(""):'<p class="empty">Belum ada foto. Tambahkan kenangan pertama kalian di bawah.</p>';
-  $("notes").innerHTML=S.notes.length?S.notes.slice().reverse().map(function(n){return '<div class="note"><small>'+esc(n.w)+" · "+esc(n.at)+'</small><br>'+esc(n.t)+'</div>'}).join(""):'<p style="color:var(--muted);margin-top:0">Belum ada pesan. Tulis yang pertama di bawah.</p>';
-}
+      function render() {
+        $("n1").textContent = S.n1;
+        $("n2").textContent = S.n2;
+        $("since").textContent = "Bersama sejak " + fmt(S.start);
+        $("in1").value = S.n1;
+        $("in2").value = S.n2;
+        $("inDate").value = S.start;
+        $("who").innerHTML =
+          "<option>" +
+          esc(S.n1) +
+          "</option><option>" +
+          esc(S.n2) +
+          "</option>";
+        var ps = S.posts
+          .map(function (p, i) {
+            p.i = i;
+            return p;
+          })
+          .sort(function (a, b) {
+            return a.d < b.d ? 1 : -1;
+          });
+        $("feed").innerHTML = ps.length
+          ? ps
+              .map(function (p) {
+                return (
+                  '<article class="post"><h3>' +
+                  esc(p.title) +
+                  "</h3><time>" +
+                  fmt(p.d) +
+                  '</time><img src="' +
+                  p.img +
+                  '" alt="' +
+                  esc(p.title) +
+                  '">' +
+                  (p.cap ? "<p>" + esc(p.cap) + "</p>" : "") +
+                  '<button class="del" data-i="' +
+                  p.i +
+                  '">Hapus</button></article>'
+                );
+              })
+              .join("")
+          : '<p class="empty">Belum ada foto. Tambahkan kenangan pertama kalian di bawah.</p>';
+        $("notes").innerHTML = S.notes.length
+          ? S.notes
+              .slice()
+              .reverse()
+              .map(function (n) {
+                return (
+                  '<div class="note"><small>' +
+                  esc(n.w) +
+                  " · " +
+                  esc(n.at) +
+                  "</small><br>" +
+                  esc(n.t) +
+                  "</div>"
+                );
+              })
+              .join("")
+          : '<p style="color:var(--muted);margin-top:0">Belum ada pesan. Tulis yang pertama di bawah.</p>';
+      }
 
-function tick(){
-  var st=new Date(S.start+"T00:00:00"),now=new Date(),ms=Math.max(0,now-st);
-  var s=Math.floor(ms/1000);
-  $("cd").textContent=Math.floor(s/86400);
-  $("ch").textContent=Math.floor(s%86400/3600);
-  $("cm").textContent=Math.floor(s%3600/60);
-  $("cs").textContent=s%60;
-  var nx=new Date(now.getFullYear(),st.getMonth(),st.getDate());
-  if(nx<new Date(now.getFullYear(),now.getMonth(),now.getDate()))nx.setFullYear(nx.getFullYear()+1);
-  var left=Math.round((nx-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/86400000);
-  var yrs=nx.getFullYear()-st.getFullYear();
-  $("next").textContent=left===0?"Selamat hari jadi ke-"+yrs+"!":left+" hari lagi menuju hari jadi ke-"+yrs;
-}
+      function tick() {
+        var st = new Date(S.start + "T00:00:00"),
+          now = new Date(),
+          ms = Math.max(0, now - st);
+        var s = Math.floor(ms / 1000);
+        $("cd").textContent = Math.floor(s / 86400);
+        $("ch").textContent = Math.floor((s % 86400) / 3600);
+        $("cm").textContent = Math.floor((s % 3600) / 60);
+        $("cs").textContent = s % 60;
+        var nx = new Date(now.getFullYear(), st.getMonth(), st.getDate());
+        if (nx < new Date(now.getFullYear(), now.getMonth(), now.getDate()))
+          nx.setFullYear(nx.getFullYear() + 1);
+        var left = Math.round(
+          (nx - new Date(now.getFullYear(), now.getMonth(), now.getDate())) /
+            86400000,
+        );
+        var yrs = nx.getFullYear() - st.getFullYear();
+        $("next").textContent =
+          left === 0
+            ? "Selamat hari jadi ke-" + yrs + "!"
+            : left + " hari lagi menuju hari jadi ke-" + yrs;
+      }
 
-$("save").onclick=function(){
-  S.n1=$("in1").value.trim()||"Kamu";S.n2=$("in2").value.trim()||"Dia";S.start=$("inDate").value||S.start;
-  persist();render();tick();
-};
-var imgData="";
-$("pDate").value=new Date().toISOString().slice(0,10);
-$("pFile").onchange=function(){
-  var f=this.files[0];if(!f)return;
-  var r=new FileReader();
-  r.onload=function(){
-    var im=new Image();
-    im.onload=function(){
-      var m=900,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");
-      c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
-      c.getContext("2d").drawImage(im,0,0,c.width,c.height);
-      imgData=c.toDataURL("image/jpeg",0.75);
-      $("pPrev").src=imgData;$("pPrev").style.display="block";
-    };
-    im.src=r.result;
-  };
-  r.readAsDataURL(f);
-};
-$("addPost").onclick=function(){
-  var t=$("pTitle").value.trim(),d=$("pDate").value;
-  if(!t||!d||!imgData){alert("Isi judul, tanggal, dan pilih foto dulu.");return}
-  S.posts.push({title:t,d:d,img:imgData,cap:$("pCap").value.trim()});
-  if(!persist()){S.posts.pop();alert("Penyimpanan browser penuh. Hapus beberapa foto lama dulu.");return}
-  $("pTitle").value="";$("pCap").value="";$("pFile").value="";imgData="";$("pPrev").style.display="none";
-  render();
-};
-$("feed").onclick=function(e){
-  var b=e.target.closest(".del");if(!b)return;
-  if(confirm("Hapus foto ini?")){S.posts.splice(+b.dataset.i,1);persist();render()}
-};
-$("addNote").onclick=function(){
-  var t=$("noteText").value.trim();
-  if(!t){alert("Tulis pesannya dulu.");return}
-  S.notes.push({w:$("who").value,t:t,at:new Date().toLocaleDateString("id-ID",{day:"numeric",month:"short"})});
-  persist();$("noteText").value="";render();
-};
-render();tick();setInterval(tick,1000);
-</script>
-</body>
+      $("save").onclick = function () {
+        S.n1 = $("in1").value.trim() || "Kamu";
+        S.n2 = $("in2").value.trim() || "Dia";
+        S.start = $("inDate").value || S.start;
+        persist();
+        render();
+        tick();
+      };
+      var imgData = "";
+      $("pDate").value = new Date().toISOString().slice(0, 10);
+      $("pFile").onchange = function () {
+        var f = this.files[0];
+        if (!f) return;
+        var r = new FileReader();
+        r.onload = function () {
+          var im = new Image();
+          im.onload = function () {
+            var m = 900,
+              k = Math.min(1, m / Math.max(im.width, im.height)),
+              c = document.createElement("canvas");
+            c.width = Math.round(im.width * k);
+            c.height = Math.round(im.height * k);
+            c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+            imgData = c.toDataURL("image/jpeg", 0.75);
+            $("pPrev").src = imgData;
+            $("pPrev").style.display = "block";
+          };
+          im.src = r.result;
+        };
+        r.readAsDataURL(f);
+      };
+      $("addPost").onclick = function () {
+        var t = $("pTitle").value.trim(),
+          d = $("pDate").value;
+        if (!t || !d || !imgData) {
+          alert("Isi judul, tanggal, dan pilih foto dulu.");
+          return;
+        }
+        S.posts.push({
+          title: t,
+          d: d,
+          img: imgData,
+          cap: $("pCap").value.trim(),
+        });
+        if (!persist()) {
+          S.posts.pop();
+          alert("Penyimpanan browser penuh. Hapus beberapa foto lama dulu.");
+          return;
+        }
+        $("pTitle").value = "";
+        $("pCap").value = "";
+        $("pFile").value = "";
+        imgData = "";
+        $("pPrev").style.display = "none";
+        render();
+      };
+      $("feed").onclick = function (e) {
+        var b = e.target.closest(".del");
+        if (!b) return;
+        if (confirm("Hapus foto ini?")) {
+          S.posts.splice(+b.dataset.i, 1);
+          persist();
+          render();
+        }
+      };
+      $("addNote").onclick = function () {
+        var t = $("noteText").value.trim();
+        if (!t) {
+          alert("Tulis pesannya dulu.");
+          return;
+        }
+        S.notes.push({
+          w: $("who").value,
+          t: t,
+          at: new Date().toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "short",
+          }),
+        });
+        persist();
+        $("noteText").value = "";
+        render();
+      };
+      render();
+      tick();
+      setInterval(tick, 1000);
+    </script>
+  </body>
 </html>
