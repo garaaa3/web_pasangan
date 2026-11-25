@@ -17,8 +17,8 @@ h1,h2,h3{font-family:"DM Serif Display",Georgia,serif;font-weight:400;margin:0}
 h1{font-size:clamp(2rem,8vw,3rem);text-align:center;line-height:1.1}
 h2{font-size:1.6rem;margin-bottom:12px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
-input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
-input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
+input,textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--rose);outline-offset:2px}
 button{font:inherit;font-weight:600;background:var(--rose);color:#fff;border:0;border-radius:999px;padding:10px 22px;cursor:pointer}
 button:disabled{opacity:.45;cursor:default}
 button.ghost{background:transparent;color:var(--rose);border:1px solid var(--rose)}
@@ -27,6 +27,7 @@ button.link{background:none;color:var(--muted);padding:2px 0;font-weight:400;fon
 .hidden{display:none !important}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin:20px 0;flex-wrap:wrap}
 .code{font-weight:600;color:var(--gold);letter-spacing:.05em}
+.empty{color:var(--muted);text-align:center;margin:30px 0}
 
 /* Kartu beranda */
 .hero{text-align:center}
@@ -51,7 +52,6 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
 .tile{position:relative;display:block;padding:0;border:0;border-radius:0;background:var(--surface);aspect-ratio:3/4;overflow:hidden}
 .tile img,.tile video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .tile .bd{position:absolute;top:6px;right:6px;color:#fff;font-size:1.05rem;text-shadow:0 0 5px rgba(0,0,0,.8);line-height:1}
-.empty{color:var(--muted);text-align:center;margin:30px 0}
 
 /* Layar postingan penuh */
 .viewer{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -95,13 +95,33 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
 .wish .wt span{display:block;overflow-wrap:anywhere}
 .wish .wt small{color:var(--muted)}
 .wish.done .wt span{text-decoration:line-through;color:var(--muted)}
-.chk{flex:0 0 28px;width:28px;height:28px;padding:0;border-radius:50%;background:transparent;border:2px solid var(--rose);color:#fff;line-height:1}
-.wish.done .chk{background:var(--rose)}
 .wh{color:var(--muted);font-weight:600;margin:18px 0 8px}
+
+/* Kalender */
+.calhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.calhead b{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:1.3rem}
+.calhead button{background:none;color:var(--rose);font-size:1.6rem;padding:0 12px;line-height:1}
+.wd,.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.wd span{font-size:.75rem;color:var(--muted);padding:4px 0}
+.cd{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;aspect-ratio:1;min-height:0;padding:5px 0 0;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--ink);font-weight:400;font-size:.9rem}
+.cd.empty{pointer-events:none}
+.cd.today{border-color:var(--rose)}
+.cd.sel{background:var(--rose);color:#fff}
+.dts{display:flex;gap:2px;margin-top:2px;height:6px}
+.dts i{width:5px;height:5px;border-radius:50%;display:block}
+.k-impian{background:var(--rose)}.k-jadwal{background:var(--gold)}.k-ultah{background:#8e6bd8}
+.cd.sel .dts i{box-shadow:0 0 0 1px #fff}
+.legend{display:flex;gap:14px;justify-content:center;font-size:.8rem;color:var(--muted);margin-top:10px;flex-wrap:wrap}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.ev{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.ev .ic{font-size:1.3rem;flex:0 0 auto}
+.ev .et{flex:1;min-width:0}
+.ev .et span{display:block;overflow-wrap:anywhere}
+.ev .et small{color:var(--muted)}
 
 /* Menu bawah */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:center;gap:10px;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
-.tabbar button{flex:1;max-width:220px;background:transparent;color:var(--muted);border:1px solid var(--line)}
+.tabbar button{flex:1;max-width:180px;background:transparent;color:var(--muted);border:1px solid var(--line);padding:10px 8px}
 .tabbar button.on{background:var(--rose);color:#fff;border-color:var(--rose)}
 </style>
 </head>
@@ -192,11 +212,47 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
       <p class="msg" id="mWish"></p>
     </div>
     <div id="wList" style="margin-top:16px"></div>
+
+    <h2 style="margin-top:34px">Kalender kita</h2>
+    <div class="card" style="padding:14px">
+      <div class="calhead">
+        <button id="calPrev" aria-label="Bulan sebelumnya">‹</button>
+        <b id="calTitle"></b>
+        <button id="calNext" aria-label="Bulan berikutnya">›</button>
+      </div>
+      <div class="wd"><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span><span>Min</span></div>
+      <div class="cgrid" id="calGrid"></div>
+      <div class="legend">
+        <span><i class="k-impian"></i>Rencana impian</span>
+        <span><i class="k-jadwal"></i>Jadwal main</span>
+        <span><i class="k-ultah"></i>Ulang tahun</span>
+      </div>
+    </div>
+
+    <div id="calDay"></div>
+
+    <div id="eForm" class="card hidden">
+      <label style="display:block;font-size:.9rem;color:var(--muted);margin-bottom:4px" for="eKind">Jenis tanda</label>
+      <select id="eKind">
+        <option value="impian">Rencana menjalankan impian</option>
+        <option value="jadwal">Jadwal main</option>
+        <option value="ultah">Ulang tahun</option>
+      </select>
+      <select id="eWish" aria-label="Pilih impian"></select>
+      <input id="eTitle" placeholder="Tulis nama acara" aria-label="Nama acara" maxlength="200">
+      <label style="display:block;font-size:.9rem;color:var(--muted);margin-bottom:4px" for="eDateIn">Tanggal</label>
+      <input type="date" id="eDateIn">
+      <p id="eNote" style="color:var(--muted);font-size:.85rem;margin:0 0 10px"></p>
+      <button id="bSaveEv">Simpan tanda</button>
+      <button class="link" id="bCancelEv">Batal</button>
+      <p class="msg" id="mEv"></p>
+    </div>
+
+    <div class="wh" style="margin-top:22px">Segera datang</div>
+    <div id="calUp"></div>
   </div>
 
   <!-- Tambah postingan -->
-
-  <button data-tab="tambah">+ Tambah</button>
   <div id="tabTambah" class="hidden">
     <div id="stPick">
       <div class="pickbar">
@@ -256,9 +312,15 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const $ = id => document.getElementById(id);
 const MAXN = 10, MAXVID = 45 * 1024 * 1024;
+const MONTHS = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const ICONS = { impian:"🎯", jadwal:"🗓", ultah:"🎂" };
 let uid = null, cid = null, names = {}, startDate = null;
 let allPosts = [], urlMap = {}, curPT = "foto";
 let sel = [], cur = 0;
+let wishes = [], events = [];
+let calY = new Date().getFullYear(), calM = new Date().getMonth(), selDate = ymd(new Date());
+
+function ymd(d){ return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
 
 function show(v){
   ["vAuth","vSetup","vApp"].forEach(x => $(x).classList.toggle("hidden", x !== v));
@@ -270,10 +332,10 @@ function fmt(d){ return new Date(d + "T00:00:00").toLocaleDateString("id-ID", {d
 
 function tab(t){
   $("tabBeranda").classList.toggle("hidden", t !== "beranda");
-  $("tabTambah").classList.toggle("hidden", t !== "tambah");
   $("tabImpian").classList.toggle("hidden", t !== "impian");
-  if(t === "impian") loadWishes();
+  $("tabTambah").classList.toggle("hidden", t !== "tambah");
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  if(t === "impian"){ loadWishes(); loadEvents(); }
   window.scrollTo(0, 0);
 }
 document.querySelectorAll("#nav button").forEach(b => b.onclick = () => tab(b.dataset.tab));
@@ -364,14 +426,12 @@ function tick(){
 setInterval(tick, 1000);
 
 // ---------- Data postingan ----------
-// Daftar media sebuah postingan (mendukung postingan lama yang hanya berisi foto)
 function mediaOf(p){
   if(p.media && p.media.length) return p.media;
   const ps = (p.image_paths && p.image_paths.length) ? p.image_paths : [p.image_path];
   return ps.map(x => ({ p:x, t:"i" }));
 }
 function ratioOf(m){ return (m.w && m.h) ? Math.min(2, Math.max(0.6, m.w / m.h)) : 0.8; }
-// Untuk postingan lama tanpa ukuran: sesuaikan bingkai setelah foto termuat
 function fit(el){
   const s = el.closest(".slider"); if(!s || !el.naturalWidth) return;
   s.style.aspectRatio = Math.min(2, Math.max(0.6, el.naturalWidth / el.naturalHeight));
@@ -459,7 +519,6 @@ function closeViewer(){
 }
 $("vBack").onclick = closeViewer;
 
-// Penanda geser (1/3 dan titik), video lain dijeda saat digeser
 $("vList").addEventListener("scroll", e => {
   const t = e.target;
   if(!t.classList || !t.classList.contains("track")) return;
@@ -474,6 +533,17 @@ $("vList").onclick = async e => {
   if(t.dataset.nav){
     const tr = t.closest(".slider").querySelector(".track");
     tr.scrollBy({ left:(t.dataset.nav === "next" ? 1 : -1) * tr.clientWidth, behavior:"smooth" });
+  } else if(t.dataset.editpost){
+    const p = allPosts.find(x => x.id === t.dataset.editpost); if(!p) return;
+    const nt = prompt("Judul baru:", p.title); if(nt === null) return;
+    if(!nt.trim()){ alert("Judul tidak boleh kosong."); return; }
+    const nc = prompt("Cerita baru (kosongkan untuk menghapus cerita):", p.caption || ""); if(nc === null) return;
+    const { error } = await sb.from("posts").update({ title:nt.trim(), caption:nc.trim() || null }).eq("id", p.id);
+    if(error){ alert("Gagal menyimpan: " + error.message); return; }
+    const y = $("viewer").scrollTop;
+    await loadFeed();
+    $("vList").innerHTML = listFor(curPT).map(articleHTML).join("");
+    $("viewer").scrollTop = y;
   } else if(t.dataset.delpost){
     const p = allPosts.find(x => x.id === t.dataset.delpost);
     if(!p || !confirm("Hapus postingan ini beserta semua foto dan videonya?")) return;
@@ -501,6 +571,190 @@ $("bSaveInfo").onclick = async () => {
   if(r2.error){ $("mInfo").textContent = "Gagal menyimpan tanggal: " + r2.error.message; return; }
   $("mInfo").textContent = "Tersimpan.";
   await loadApp();
+};
+
+// ---------- Impian ----------
+async function loadWishes(){
+  const { data, error } = await sb.from("wishes")
+    .select("id,author_id,title,done,done_at,created_at")
+    .eq("couple_id", cid).order("created_at", { ascending:false });
+  if(error){ $("wList").innerHTML = '<p class="msg">' + esc(error.message) + '</p>'; return; }
+  wishes = data; renderWishes(); fillWishSelect();
+}
+
+function wishRow(w){
+  return '<div class="wish' + (w.done ? " done" : "") + '"><div class="wt"><span>' + esc(w.title) + '</span><small>' +
+    esc(names[w.author_id] || "Pasangan") + (w.done && w.done_at ? " · terwujud " + fmt(w.done_at.slice(0, 10)) : "") + '</small></div>' +
+    '<button class="link" data-wt="' + w.id + '">' + (w.done ? "Batal terwujud" : "Terwujud") + '</button>' +
+    '<button class="link" data-wedit="' + w.id + '">Ubah</button>' +
+    '<button class="link" data-wdel="' + w.id + '">Hapus</button></div>';
+}
+
+function renderWishes(){
+  const todo = wishes.filter(w => !w.done), dn = wishes.filter(w => w.done);
+  $("wCount").textContent = wishes.length ? dn.length + " dari " + wishes.length + " impian sudah terwujud" : "";
+  if(!wishes.length){ $("wList").innerHTML = '<p class="empty">Belum ada impian. Ketuk + Tambah impian di atas.</p>'; return; }
+  $("wList").innerHTML =
+    (todo.length ? '<div class="wh">Belum terwujud</div>' + todo.map(wishRow).join("") : "") +
+    (dn.length ? '<div class="wh">Sudah terwujud</div>' + dn.map(wishRow).join("") : "");
+}
+
+async function addWish(){
+  const t = $("wTitle").value.trim(); $("mWish").textContent = "";
+  if(!t){ $("mWish").textContent = "Tulis impiannya dulu."; return; }
+  const { error } = await sb.from("wishes").insert({ couple_id:cid, title:t });
+  if(error){ $("mWish").textContent = "Gagal menambah: " + error.message; return; }
+  $("wTitle").value = ""; $("wForm").classList.add("hidden"); loadWishes();
+}
+$("bShowWish").onclick = () => {
+  $("wForm").classList.toggle("hidden");
+  if(!$("wForm").classList.contains("hidden")) $("wTitle").focus();
+};
+$("bCancelWish").onclick = () => { $("wTitle").value = ""; $("mWish").textContent = ""; $("wForm").classList.add("hidden"); };
+$("bWish").onclick = addWish;
+$("wTitle").addEventListener("keydown", e => { if(e.key === "Enter") addWish(); });
+
+$("wList").onclick = async e => {
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.wt){
+    const w = wishes.find(x => x.id === b.dataset.wt); if(!w) return;
+    const { error } = await sb.from("wishes").update({ done:!w.done, done_at:!w.done ? new Date().toISOString() : null }).eq("id", w.id);
+    if(error) alert("Gagal menyimpan: " + error.message); else loadWishes();
+  } else if(b.dataset.wedit){
+    const w = wishes.find(x => x.id === b.dataset.wedit); if(!w) return;
+    const t = prompt("Ubah impian:", w.title); if(t === null) return;
+    if(!t.trim()){ alert("Impian tidak boleh kosong."); return; }
+    const { error } = await sb.from("wishes").update({ title:t.trim() }).eq("id", w.id);
+    if(error) alert("Gagal menyimpan: " + error.message); else loadWishes();
+  } else if(b.dataset.wdel){
+    if(!confirm("Hapus impian ini?")) return;
+    const { error } = await sb.from("wishes").delete().eq("id", b.dataset.wdel);
+    if(error) alert("Gagal menghapus: " + error.message); else { loadWishes(); loadEvents(); }
+  }
+};
+
+// ---------- Kalender ----------
+async function loadEvents(){
+  const { data, error } = await sb.from("events")
+    .select("id,author_id,title,event_date,kind,wish_id,repeat_yearly")
+    .eq("couple_id", cid).order("event_date", { ascending:true });
+  if(error){ $("calDay").innerHTML = '<p class="msg">' + esc(error.message) + '</p>'; return; }
+  events = data; renderCal();
+}
+
+function evOn(ds){
+  const md = ds.slice(5), y = +ds.slice(0, 4);
+  return events.filter(e => e.event_date === ds || (e.repeat_yearly && e.event_date.slice(5) === md && y >= +e.event_date.slice(0, 4)));
+}
+
+function renderCal(){
+  $("calTitle").textContent = MONTHS[calM] + " " + calY;
+  const lead = (new Date(calY, calM, 1).getDay() + 6) % 7, days = new Date(calY, calM + 1, 0).getDate();
+  const today = ymd(new Date());
+  let h = "";
+  for(let i = 0; i < lead; i++) h += '<span class="cd empty"></span>';
+  for(let d = 1; d <= days; d++){
+    const ds = calY + "-" + String(calM + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+    const ks = Array.from(new Set(evOn(ds).map(e => e.kind))).slice(0, 3);
+    h += '<button class="cd' + (ds === today ? " today" : "") + (ds === selDate ? " sel" : "") + '" data-d="' + ds + '">' + d +
+      '<span class="dts">' + ks.map(k => '<i class="k-' + k + '"></i>').join("") + '</span></button>';
+  }
+  $("calGrid").innerHTML = h;
+  renderDay(); renderUpcoming();
+}
+
+function evText(e, ds){
+  let t = names[e.author_id] || "Pasangan";
+  if(e.kind === "ultah"){ const age = +ds.slice(0, 4) - +e.event_date.slice(0, 4); if(age > 0) t = "ulang tahun ke-" + age + " · " + t; }
+  return t;
+}
+
+function renderDay(){
+  const list = evOn(selDate);
+  $("calDay").innerHTML = '<div class="wh">' + fmt(selDate) + '</div>' +
+    (list.length ? list.map(e =>
+      '<div class="ev"><span class="ic">' + ICONS[e.kind] + '</span><div class="et"><span>' + esc(e.title) + '</span><small>' + esc(evText(e, selDate)) + '</small></div>' +
+      '<button class="link" data-evedit="' + e.id + '">Ubah</button><button class="link" data-evdel="' + e.id + '">Hapus</button></div>').join("")
+      : '<p style="color:var(--muted);margin:0 0 8px">Belum ada tanda di tanggal ini.</p>') +
+    '<button class="ghost" data-evadd="1">+ Tambah tanda di tanggal ini</button>';
+}
+
+function nextOcc(e, today){
+  if(e.event_date >= today) return e.event_date;
+  if(!e.repeat_yearly) return null;
+  const md = e.event_date.slice(5), y = +today.slice(0, 4);
+  let c = y + "-" + md; if(c < today) c = (y + 1) + "-" + md;
+  return c;
+}
+
+function renderUpcoming(){
+  const today = ymd(new Date());
+  const items = events.map(e => ({ e, o:nextOcc(e, today) })).filter(x => x.o).sort((a, b) => a.o < b.o ? -1 : 1).slice(0, 8);
+  if(!items.length){ $("calUp").innerHTML = '<p style="color:var(--muted);margin:0">Belum ada acara yang akan datang.</p>'; return; }
+  $("calUp").innerHTML = items.map(x => {
+    const left = Math.round((new Date(x.o + "T00:00:00") - new Date(today + "T00:00:00")) / 86400000);
+    return '<div class="ev"><span class="ic">' + ICONS[x.e.kind] + '</span><div class="et"><span>' + esc(x.e.title) + '</span><small>' + fmt(x.o) +
+      (x.e.kind === "ultah" ? " · " + esc(evText(x.e, x.o).split(" · ")[0]) : "") + ' · ' + (left === 0 ? "hari ini" : left + " hari lagi") + '</small></div></div>';
+  }).join("");
+}
+
+$("calPrev").onclick = () => { calM--; if(calM < 0){ calM = 11; calY--; } renderCal(); };
+$("calNext").onclick = () => { calM++; if(calM > 11){ calM = 0; calY++; } renderCal(); };
+$("calGrid").onclick = e => { const b = e.target.closest(".cd"); if(b && b.dataset.d){ selDate = b.dataset.d; renderCal(); } };
+
+// Form tanda acara
+function fillWishSelect(){
+  const opts = ['<option value="">Pilih dari daftar impian (atau tulis sendiri di bawah)</option>']
+    .concat(wishes.filter(w => !w.done).map(w => '<option value="' + w.id + '">' + esc(w.title) + '</option>'));
+  const keep = $("eWish").value;
+  $("eWish").innerHTML = opts.join(""); $("eWish").value = keep;
+}
+function kindUI(){
+  const k = $("eKind").value;
+  $("eWish").classList.toggle("hidden", k !== "impian");
+  $("eTitle").placeholder = k === "impian" ? "Rencana, misalnya: Berangkat liburan ke Bali" : k === "jadwal" ? "Jadwal, misalnya: Nonton bareng" : "Nama, misalnya: Ulang tahun Dia";
+  $("eNote").textContent = k === "ultah" ? "Ulang tahun otomatis muncul lagi setiap tahun. Isi tanggal lahir asli supaya umurnya terhitung." : "";
+}
+$("eKind").onchange = kindUI;
+$("eWish").onchange = () => { const w = wishes.find(x => x.id === $("eWish").value); if(w) $("eTitle").value = w.title; };
+
+let editingEv = null;
+function openEvForm(ev){
+  editingEv = ev || null;
+  $("eKind").value = ev ? ev.kind : "impian";
+  fillWishSelect(); $("eWish").value = ev && ev.wish_id ? ev.wish_id : "";
+  $("eTitle").value = ev ? ev.title : "";
+  $("eDateIn").value = ev ? ev.event_date : selDate;
+  $("mEv").textContent = ""; kindUI();
+  $("eForm").classList.remove("hidden");
+  $("eForm").scrollIntoView({ behavior:"smooth", block:"center" });
+}
+function closeEvForm(){ editingEv = null; $("eForm").classList.add("hidden"); }
+$("bCancelEv").onclick = closeEvForm;
+
+$("bSaveEv").onclick = async () => {
+  const kind = $("eKind").value, title = $("eTitle").value.trim(), date = $("eDateIn").value;
+  $("mEv").textContent = "";
+  if(!title){ $("mEv").textContent = "Tulis nama acaranya dulu."; return; }
+  if(!date){ $("mEv").textContent = "Pilih tanggalnya dulu."; return; }
+  const row = { title, event_date:date, kind, repeat_yearly:kind === "ultah", wish_id:(kind === "impian" && $("eWish").value) ? $("eWish").value : null };
+  const r = editingEv
+    ? await sb.from("events").update(row).eq("id", editingEv.id)
+    : await sb.from("events").insert(Object.assign({ couple_id:cid }, row));
+  if(r.error){ $("mEv").textContent = "Gagal menyimpan: " + r.error.message; return; }
+  selDate = date; calY = +date.slice(0, 4); calM = +date.slice(5, 7) - 1;
+  closeEvForm(); loadEvents();
+};
+
+$("calDay").onclick = async e => {
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.evadd) openEvForm(null);
+  else if(b.dataset.evedit){ const ev = events.find(x => x.id === b.dataset.evedit); if(ev) openEvForm(ev); }
+  else if(b.dataset.evdel){
+    if(!confirm("Hapus tanda ini?")) return;
+    const { error } = await sb.from("events").delete().eq("id", b.dataset.evdel);
+    if(error) alert("Gagal menghapus: " + error.message); else loadEvents();
+  }
 };
 
 // ---------- Pilih media (langkah 1) ----------
@@ -625,102 +879,6 @@ $("bPost").onclick = async () => {
     resetPost(); tab("beranda"); loadFeed();
   }
 };
-
-// ---------- Ubah judul dan cerita postingan ----------
-$("vList").addEventListener("click", async e => {
-  const b = e.target.closest("button[data-editpost]"); if(!b) return;
-  const p = allPosts.find(x => x.id === b.dataset.editpost); if(!p) return;
-  const t = prompt("Judul baru:", p.title); if(t === null) return;
-  if(!t.trim()){ alert("Judul tidak boleh kosong."); return; }
-  const c = prompt("Cerita baru (kosongkan untuk menghapus cerita):", p.caption || ""); if(c === null) return;
-  const { error } = await sb.from("posts").update({ title:t.trim(), caption:c.trim() || null }).eq("id", p.id);
-  if(error){ alert("Gagal menyimpan: " + error.message); return; }
-  const y = $("viewer").scrollTop;
-  await loadFeed();
-  $("vList").innerHTML = listFor(curPT).map(articleHTML).join("");
-  $("viewer").scrollTop = y;
-});
-
-// ---------- Daftar impian ----------
-let wishes = [];
-
-async function loadWishes(){
-  const { data, error } = await sb.from("wishes")
-    .select("id,author_id,title,done,done_at,created_at")
-    .eq("couple_id", cid).order("created_at", { ascending:false });
-  if(error){ $("wList").innerHTML = '<p class="msg">' + esc(error.message) + '</p>'; return; }
-  wishes = data; renderWishes();
-}
-
-function wishRow(w){
-  return '<div class="wish' + (w.done ? " done" : "") + '">' +
-    '<button class="chk" data-wt="' + w.id + '" aria-label="' + (w.done ? "Tandai belum terwujud" : "Tandai terwujud") + '">' + (w.done ? "✓" : "") + '</button>' +
-    '<div class="wt"><span>' + esc(w.title) + '</span><small>' + esc(names[w.author_id] || "Pasangan") +
-    (w.done && w.done_at ? " · terwujud " + fmt(w.done_at.slice(0, 10)) : "") + '</small></div>' +
-    '<button class="link" data-wedit="' + w.id + '">Ubah</button>' +
-    '<button class="link" data-wdel="' + w.id + '">Hapus</button></div>';
-}
-
-function renderWishes(){
-  const todo = wishes.filter(w => !w.done), dn = wishes.filter(w => w.done);
-  $("wCount").textContent = wishes.length ? dn.length + " dari " + wishes.length + " impian sudah terwujud" : "";
-  if(!wishes.length){ $("wList").innerHTML = '<p class="empty">Belum ada impian. Tulis impian pertama kalian di atas.</p>'; return; }
-  $("wList").innerHTML =
-    (todo.length ? '<div class="wh">Belum terwujud</div>' + todo.map(wishRow).join("") : "") +
-    (dn.length ? '<div class="wh">Sudah terwujud</div>' + dn.map(wishRow).join("") : "");
-}
-
-async function addWish(){
-  const t = $("wTitle").value.trim(); $("mWish").textContent = "";
-  if(!t){ $("mWish").textContent = "Tulis impiannya dulu."; return; }
-  const { error } = await sb.from("wishes").insert({ couple_id:cid, title:t });
-  if(error){ $("mWish").textContent = "Gagal menambah: " + error.message; return; }
-  $("wTitle").value = ""; loadWishes();
-}
-$("bWish").onclick = addWish;
-$("wTitle").addEventListener("keydown", e => { if(e.key === "Enter") addWish(); });
-
-$("wList").onclick = async e => {
-  const b = e.target.closest("button"); if(!b) return;
-  if(b.dataset.wt){
-    const w = wishes.find(x => x.id === b.dataset.wt); if(!w) return;
-    const { error } = await sb.from("wishes").update({ done:!w.done, done_at:!w.done ? new Date().toISOString() : null }).eq("id", w.id);
-    if(error) alert("Gagal menyimpan: " + error.message); else loadWishes();
-  } else if(b.dataset.wedit){
-    const w = wishes.find(x => x.id === b.dataset.wedit); if(!w) return;
-    const t = prompt("Ubah impian:", w.title); if(t === null) return;
-    if(!t.trim()){ alert("Impian tidak boleh kosong."); return; }
-    const { error } = await sb.from("wishes").update({ title:t.trim() }).eq("id", w.id);
-    if(error) alert("Gagal menyimpan: " + error.message); else loadWishes();
-  } else if(b.dataset.wdel){
-    if(!confirm("Hapus impian ini?")) return;
-    const { error } = await sb.from("wishes").delete().eq("id", b.dataset.wdel);
-    if(error) alert("Gagal menghapus: " + error.message); else loadWishes();
-  }
-};
-
-// ---------- Impian: tampilan baru (tanpa lingkaran) ----------
-function wishRow(w){
-  return '<div class="wish' + (w.done ? " done" : "") + '"><div class="wt"><span>' + esc(w.title) + '</span><small>' +
-    esc(names[w.author_id] || "Pasangan") + (w.done && w.done_at ? " · terwujud " + fmt(w.done_at.slice(0, 10)) : "") + '</small></div>' +
-    '<button class="link" data-wt="' + w.id + '">' + (w.done ? "Batal terwujud" : "Terwujud") + '</button>' +
-    '<button class="link" data-wedit="' + w.id + '">Ubah</button>' +
-    '<button class="link" data-wdel="' + w.id + '">Hapus</button></div>';
-}
-
-async function addWish(){
-  const t = $("wTitle").value.trim(); $("mWish").textContent = "";
-  if(!t){ $("mWish").textContent = "Tulis impiannya dulu."; return; }
-  const { error } = await sb.from("wishes").insert({ couple_id:cid, title:t });
-  if(error){ $("mWish").textContent = "Gagal menambah: " + error.message; return; }
-  $("wTitle").value = ""; $("wForm").classList.add("hidden"); loadWishes();
-}
-
-$("bShowWish").onclick = () => {
-  $("wForm").classList.toggle("hidden");
-  if(!$("wForm").classList.contains("hidden")) $("wTitle").focus();
-};
-$("bCancelWish").onclick = () => { $("wTitle").value = ""; $("mWish").textContent = ""; $("wForm").classList.add("hidden"); };
 
 renderPick();
 route();
