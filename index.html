@@ -450,7 +450,7 @@ function tick(){
   const nx = new Date(now.getFullYear(), st.getMonth(), st.getDate());
   if(nx < today) nx.setFullYear(nx.getFullYear() + 1);
   const left = Math.round((nx - today) / 86400000), yrs = nx.getFullYear() - st.getFullYear();
-  $("next").textContent = left === 0 ? "Selamat hari jadi ke-" + yrs + "!" : left + " hari lagi menuju hari jadi ke-" + yrs;
+  $("next").textContent = left === 0 ? "Selamat hari jadi ke-" + yrs + "!" : left + " hari lagi menuju hari jadi ke-" + yrs + " tahun";
 }
 setInterval(tick, 1000);
 
