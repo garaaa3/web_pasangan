@@ -104,7 +104,7 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
 .wd,.cgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;text-align:center}
 .wd span{font-size:.75rem;color:var(--muted);padding:4px 0}
 .cd{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;aspect-ratio:1;min-height:0;padding:5px 0 0;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--ink);font-weight:400;font-size:.9rem}
-.cd.empty{pointer-events:none;margin:0}
+.cd.empty{pointer-events:none;margin:0} 
 .cd.sel{background:none;color:var(--rose);font-weight:600;text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:2px}
 .cd.sel{background:var(--rose);color:#fff}
 .dts{display:flex;gap:2px;margin-top:2px;height:6px}
@@ -117,7 +117,27 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
 .ev .ic{font-size:1.3rem;flex:0 0 auto}
 .ev .et{flex:1;min-width:0}
 .ev .et span{display:block;overflow-wrap:anywhere}
-.ev .et small{color:var(--muted)}
+.ev .et small{color:varH(--muted)}
+
+/* Halaman masuk */
+#vAuth{position:fixed;inset:0;z-index:100;overflow-y:auto;background:#1b1530;font-family:Montserrat,Figtree,system-ui,sans-serif}
+.authbg{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.authwrap{position:relative;z-index:1;min-height:100%;display:flex;align-items:center;justify-content:flex-end;padding:24px 6vw}
+.authcard{width:100%;max-width:440px;background:#fff;color:#1d2033;padding:32px 30px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+.logo{width:50px;height:50px;background:#d4002a;color:#fff;font-weight:800;font-size:1.6rem;display:flex;align-items:center;justify-content:center}
+.brand b{display:block;font-weight:800;font-size:1.15rem;letter-spacing:.02em}
+.brand small{color:#8a90a2;font-size:.8rem}
+.authcard h2{font-family:Montserrat,Figtree,system-ui,sans-serif;font-weight:800;font-size:1.7rem;margin:0 0 6px}
+.authcard .sub{color:#8a90a2;font-size:.9rem;margin:0 0 22px}
+.authcard label{display:block;font-weight:800;font-size:.75rem;letter-spacing:.03em;margin:14px 0 6px}
+.authcard input{border-radius:0;background:#fff;color:#1d2033;border:1px solid #e1e4ea;padding:15px 16px;margin:0}
+.authcard input:focus-visible{outline:2px solid #d4002a;outline-offset:0}
+.authbtn{width:100%;border-radius:0;background:#d4002a;color:#fff;letter-spacing:.04em;font-weight:800;padding:16px;margin-top:22px}
+.authcard .msg{color:#d4002a;text-align:center;margin:10px 0 0}
+.authcard .switch{text-align:center;color:#8a90a2;font-size:.85rem;margin:22px 0 0}
+.authcard .switch a{color:#d4002a;font-weight:800;text-decoration:underline}
+@media (max-width:760px){.authwrap{justify-content:center;padding:16px}}
 
 /* Menu bawah */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:center;gap:10px;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
@@ -130,13 +150,24 @@ summary{cursor:pointer;color:var(--rose);font-weight:600;text-align:center}
 <h1 id="siteTitle">Kita Berdua</h1>
 
 <!-- Masuk / daftar -->
-<section id="vAuth" class="hidden" style="margin-top:28px">
-  <div class="card">
-    <h2>Masuk atau daftar</h2>
-    <input id="email" type="email" placeholder="Email" autocomplete="email" aria-label="Email">
-    <input id="pass" type="password" placeholder="Password (minimal 6 karakter)" autocomplete="current-password" aria-label="Password">
-    <button id="bLogin">Masuk</button> <button id="bSignup" class="ghost">Daftar</button>
-    <p class="msg" id="mAuth"></p>
+<section id="vAuth" class="hidden">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap">
+  <video class="authbg" autoplay muted loop playsinline preload="auto" poster="login-bg.jpg" aria-hidden="true"><source src="login-bg.mp4" type="video/mp4"></video>
+  <div class="authwrap">
+    <div class="authcard">
+      <div class="brand"><div class="logo">K</div><div><b>KITA BERDUA</b><small>Ruang kecil untuk kita</small></div></div>
+      <h2 id="aTitle">SELAMAT DATANG</h2>
+      <p class="sub" id="aSub">Masuk untuk membuka kenangan dan rencana kita.</p>
+      <label for="email">EMAIL</label>
+      <input id="email" type="email" placeholder="nama@email.com" autocomplete="email">
+      <label for="pass">PASSWORD</label>
+      <input id="pass" type="password" placeholder="Masukkan password" autocomplete="current-password">
+      <button id="bLogin" class="authbtn">MASUK →</button>
+      <button id="bSignup" class="authbtn hidden">DAFTAR →</button>
+      <p class="msg" id="mAuth"></p>
+      <p class="switch" id="swLogin">Belum punya akun? <a href="#" id="goSignup">Daftar</a></p>
+      <p class="switch hidden" id="swSignup">Sudah punya akun? <a href="#" id="goLogin">Masuk</a></p>
+    </div>
   </div>
 </section>
 
@@ -886,6 +917,22 @@ $("sList").onclick = async e => {
     if(error) alert("Gagal menyimpan: " + error.message); else loadSavings();
   }
 };
+
+// ---------- Tampilan masuk: ganti Masuk / Daftar ----------
+function authMode(m){
+  const s = m === "signup";
+  $("bLogin").classList.toggle("hidden", s); $("bSignup").classList.toggle("hidden", !s);
+  $("swLogin").classList.toggle("hidden", s); $("swSignup").classList.toggle("hidden", !s);
+  $("aTitle").textContent = s ? "BUAT AKUN" : "SELAMAT DATANG";
+  $("aSub").textContent = s ? "Daftar dulu, lalu buat ruang atau gabung dengan kode undangan." : "Masuk untuk membuka kenangan dan rencana kita.";
+  $("pass").autocomplete = s ? "new-password" : "current-password";
+  $("mAuth").textContent = "";
+}
+$("goSignup").onclick = e => { e.preventDefault(); authMode("signup"); };
+$("goLogin").onclick = e => { e.preventDefault(); authMode("login"); };
+$("pass").addEventListener("keydown", e => {
+  if(e.key === "Enter") ($("bSignup").classList.contains("hidden") ? $("bLogin") : $("bSignup")).click();
+});
 
 // ---------- Pilih media (langkah 1) ----------
 function readMeta(f){
